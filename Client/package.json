@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "bootstrap": "^4.1.1",
+    "three": "^0.94.0"
+  }
+}
