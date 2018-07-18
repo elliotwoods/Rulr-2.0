@@ -5,6 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: Main.py",
+            "type": "python",
+            "request": "launch",
+            "module": "rulr"
+        },
+        {
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",

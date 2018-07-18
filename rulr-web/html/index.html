@@ -6,9 +6,10 @@
 
 	<title>Rulr</title>
 
-	<link rel="stylesheet" href="../css/bootstrap.min.css">
 	<script src="../node_modules/jquery/dist/jquery.min.js"></script>
-	<script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+	
+	<link rel="stylesheet" href="../css/bootstrap.min.css">
+	<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
 	<link href="../node_modules/jsoneditor/dist/jsoneditor.min.css" rel="stylesheet" type="text/css">
 	<script src="../node_modules/jsoneditor/dist/jsoneditor.min.js"></script>
@@ -39,45 +40,19 @@
 			<div id="annotations"></div>
 		</div>
 		<div class="col-sm-4" id="detailView" style="height: 100vh;">
-			<div id="inspector">
-				<div class="bs-component">
-					<nav class="navbar navbar-default">
-						<div class="container-fluid">
-							<div class="navbar-header">
-								<span class="navbar-brand" id="sceneObjectName">Inspector</span>
-							</div>
-
-							<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-								<ul class="nav navbar-nav">
-									<button type="button" class="btn btn-info btn-sm" id="refreshButton">
-										<span class="glyphicon glyphicon-refresh"></span>
-										&nbsp;
-										<span id="refreshButtonText">Refresh</span>
-									</button>
-								</ul>
-							</div>
-						</div>
-					</nav>
-				</div>
-
-				<div id="inspectorContent" height="100%"></div>
-
-			</div>
+			<div id="placeholder-Inspector"></div>
+			<div id="placeholder-WorldExplorer"></div>
 		</div>
 	</div>
+
+	<div id="placeholder-LoadSessionModal"></div>
 
 	<script src="../node_modules/three/build/three.js"></script>
 	<script src="../node_modules/three/examples/js/controls/OrbitControls.js"></script>
 	<script src="../node_modules/three/examples/js/libs/stats.min.js"></script>
 	<script src="../node_modules/three/examples/js/Detector.js"></script>
 	<script src="../node_modules/three/examples/js/renderers/Projector.js"></script>
-
 	<script src="../node_modules/tween.js/src/Tween.js"></script>
-
-	<script src="../js/KC.js/KC.Annotations.js"></script>
-	<script src="../js/KC.js/KC.SceneObject.js"></script>
-	<script src="../js/KC.js/KC.JsonEditorREST.js"></script>
-	<script src="../js/KC.js/KC.Notices.js"></script>
 
 	<script src="../js/index.js"></script>
 </body>

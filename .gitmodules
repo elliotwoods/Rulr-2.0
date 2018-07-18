@@ -1,6 +1,3 @@
 [submodule "Client/Client/js/KC.js"]
 	path = Client/Client/js/KC.js
 	url = https://github.com/elliotwoods/KC.js.git
-[submodule "Client/js/KC.js"]
-	path = Client/js/KC.js
-	url = https://github.com/elliotwoods/KC.js.git

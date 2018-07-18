@@ -2,18 +2,10 @@ var scene, camera, controls, renderer, stats;
 var geometry, material, mesh;
 var raycaster, mousePosition, projector;
 
-var interlock;
-var siteLocation;
-var solarTracker;
-var weather;
-var halo;
-
-var sceneObjects;
+var rootNode;
 
 var scaleFactor = 1.0;
 var forEach = Array.prototype.forEach;
-
-var annotations;
 
 var renderSize = {
 	width: 100,
@@ -23,11 +15,19 @@ var renderSize = {
 init();
 animate();
 
+$(document).ready(function() {
+	$("#placeholder-Inspector").load("Interface/Inspector.html");
+	$("#placeholder-WorldExplorer").load("Interface/WorldExplorer.html");
+	$("#placeholder-LoadSessionModal").load("Interface/LoadSessionModal.html", function() {
+		showLoadDialog();
+	});
+});
+
 function init() {
 	if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 	scene = new THREE.Scene();
-	sceneObjects = new SceneObjects(document.getElementById('inspectorContent'));
+	var inspectorContentDiv = document.getElementById('inspectorContent');
 
 	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01 * scaleFactor, 1000 * scaleFactor);
 	camera.position.x = 0;
@@ -51,9 +51,6 @@ function init() {
 	controls.mouseButtons.ZOOM = 2;
 	controls.mouseButtons.PAN = 1;
 
-	annotations = new Annotations();
-	initNotices();
-
 	$(window).resize(function() {
 		onWindowResize();
 	})
@@ -67,18 +64,15 @@ function init() {
 		var minor = new THREE.GridHelper(40.0, 400 / 2, 0xeeeeee, 0xeeeeee);
 		scene.add(minor);
 	}
-	//labels
-	{
-		annotations.push(new Annotation("+x", { position: new THREE.Vector3(40, 0, 0)}, true));
-		annotations.push(new Annotation("+z", { position: new THREE.Vector3(0, 0, 40)}));
-	}
 
 	onWindowResize();
 	render();
+
+	showLoadDialog();
 }
 
 function doubleClick() {
-	sceneObjects.doubleClick();
+	//sceneObjects.doubleClick();
 }
 
 
@@ -98,11 +92,11 @@ function onDocumentMouseMove(event) {
 }
 
 function onDocumentMouseDown(event) {
-	sceneObjects.mouseDown(event);
+	//sceneObjects.mouseDown(event);
 }
 
 function onDocumentMouseUp(event) {
-	sceneObjects.mouseUp(event);
+	//sceneObjects.mouseUp(event);
 }
 
 function animate(time) {
@@ -110,8 +104,6 @@ function animate(time) {
 
 	TWEEN.update(time);
 	controls.update();
-	annotations.update();	
-	sceneObjects.update();
 
 	raycast();
 	render();
@@ -127,5 +119,25 @@ function render() {
 
 function raycast() {
 	raycaster.setFromCamera(mousePosition, camera);
-	sceneObjects.updateHover(raycaster);
+	//sceneObjects.updateHover(raycaster);
+}
+
+function showLoadDialog() {
+	$.ajax({
+		url: "/Sessions/List"
+	}).then(function(data) {
+		if(data.success) {
+			var contentDiv = $("#loadDialog-content");
+			contentDiv.empty();
+
+			data.content.forEach(function(sessionListItem) {
+				if(sessionListItem.hasThumbnail) {
+
+				}
+
+				contentDiv.append(`<a href="#" class="list-group-item list-group-item-action">${sessionListItem.relativePath}</a>`);
+			});
+			$('#loadModal').modal({});
+		}
+	});
 }
