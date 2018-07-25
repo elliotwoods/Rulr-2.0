@@ -1,38 +1,22 @@
-import {LoadDialog} from './rulr-web/LoadProjectModal'
-
-let loadDialog = new LoadDialog();
-
-import * as $ from "jquery"
-import * as THREE from 'three'
-import 'three/examples/js/controls/OrbitControls';
-import 'three/examples/js/Detector';
+import { rulrWindow } from './rulr-web/Interface/Window.js'
 
 var scene, camera, controls, renderer, stats;
 var geometry, material, mesh;
 var raycaster, mousePosition, projector;
 
 var rootNode;
-var container;
 
 var scaleFactor = 1.0;
 var forEach = Array.prototype.forEach;
+var container;
 
 var renderSize = {
 	width: 100,
 	height: 100
 };
 
-$(document).ready(function() {
-	$("#placeholder-Inspector").load("Interface/Inspector.html");
-	$("#placeholder-WorldExplorer").load("Interface/WorldExplorer.html");
-	$("#placeholder-LoadProjectModal").load("Interface/LoadProjectModal.html", function() {
-		loadDialog.show();
-	});
-	alert('loaded');
-});
-
 function init() {
-	//if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+	if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 	scene = new THREE.Scene();
 	var inspectorContentDiv = document.getElementById('inspectorContent');
@@ -66,7 +50,7 @@ function init() {
 	renderer.domElement.addEventListener( 'mousedown', onDocumentMouseDown, false );
 	renderer.domElement.addEventListener( 'mouseup', onDocumentMouseUp, false );
 
-	$(renderer.domElement).dblclick(doubleClick);
+	jQuery(renderer.domElement).dblclick(doubleClick);
 
 	{
 		var minor = new THREE.GridHelper(40.0, 400 / 2, 0xeeeeee, 0xeeeeee);
@@ -76,6 +60,10 @@ function init() {
 	onWindowResize();
 	render();
 }
+
+init();
+animate();
+
 
 function doubleClick() {
 	//sceneObjects.doubleClick();
@@ -105,7 +93,7 @@ function onDocumentMouseUp(event) {
 	//sceneObjects.mouseUp(event);
 }
 
-function animate() {
+function animate(time) {
 	requestAnimationFrame(animate);
 
 	controls.update();
@@ -126,6 +114,3 @@ function raycast() {
 	raycaster.setFromCamera(mousePosition, camera);
 	//sceneObjects.updateHover(raycaster);
 }
-
-init();
-animate();

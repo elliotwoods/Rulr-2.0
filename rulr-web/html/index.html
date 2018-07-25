@@ -6,8 +6,12 @@
 
 	<title>Rulr</title>
 
+	<script src="../node_modules/jquery/dist/jquery.min.js"></script>
+	
 	<link rel="stylesheet" href="../css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+	<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
 
 	<style>
 		#annotations {
@@ -35,20 +39,23 @@
 			<div id="annotations"></div>
 		</div>
 		<div class="col-sm-4" id="detailView" style="height: 100vh;">
-			<div id="placeholder-Inspector"></div>
-			<div id="placeholder-WorldExplorer"></div>
+			<div id="placeholder-Inspector">Inspector</div>
+			<div id="placeholder-WorldExplorer">World Explorer</div>
+			<div id="tree-WorldExplorer">trees</div>
+
 		</div>
 	</div>
 
 	<div id="placeholder-LoadProjectModal"></div>
 
-	<script src="../node_modules/jquery/dist/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" crossorigin="anonymous"></script>
-	<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="../node_modules/three/build/three.js"></script>
+	<script src="../node_modules/three/examples/js/controls/OrbitControls.js"></script>
+	<script src="../node_modules/three/examples/js/libs/stats.min.js"></script>
+	<script src="../node_modules/three/examples/js/Detector.js"></script>
+	<script src="../node_modules/three/examples/js/renderers/Projector.js"></script>
+	<script src="../node_modules/bootstrap-treeview/dist/bootstrap-treeview.min.js"></script>
 
-	<script>var exports = {}</script>
-	<script src="../node_modules/require.js/require.min.js"></script>
-	<script type="module" src="../build/app.js"></script>
+	<script type="module" src="../src/index.js"></script>
 </body>
 
 </html>

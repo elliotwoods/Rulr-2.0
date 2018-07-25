@@ -1,62 +1,66 @@
-import * as $ from "jquery"
+import { rulrWindow } from './Window.js'
 
-export class LoadDialog {
+class LoadProjectDialog {
 	constructor() {
-		alert('up to date');
+		$(document).ready(() => {
+			$("#placeholder-LoadProjectModal").load("Interface/LoadProjectModal.html", () => {
+				this.show();
+			});
+		});
 	}
 
 	show() {
-		this.refresh('.');
 		$('#loadModal').modal({});
+		this.refresh('.');
 	}
 
-	refresh(folderPath : string) {
+	refresh(folderPath) {
 		$.ajax({
 			url: "/Application/ListProjects",
 			data: {
-				folderPath : folderPath
+				folderPath: folderPath
 			}
 		}).then(data => {
-			if(data.success) {
+			if (data.success) {
 				// breadcrumbs
 				{
 					var breadcrumbsDiv = $("#loadDialog-breadcrumb");
 					breadcrumbsDiv.empty();
-	
+
 					var pathArray = data.content.selectedPath.split("/");
-					
+
 					//filter empties
-					pathArray = pathArray.filter(function(pathEntry) {
-						if(pathEntry == "") {
+					pathArray = pathArray.filter(function (pathEntry) {
+						if (pathEntry == "") {
 							return false;
 						}
-						if(pathEntry == ".") {
+						if (pathEntry == ".") {
 							return false;
 						}
-						
+
 						return true;
 					})
-	
+
 					//add a home entry
 					pathArray.splice(0, 0, '');
-	
+
 					var bottomLevelFolder = pathArray[pathArray.length - 1];
-	
+
 					pathArray.forEach((pathEntry, index) => {
 						var name = pathEntry;
-						if(index == 0) {
+						if (index == 0) {
 							name = '<i class="fas fa-home"></i>'; // home icon
 						}
-	
+
 						var newEntry = $(`<li />`, {
-							class : 'breadcrumb-item'
+							class: 'breadcrumb-item'
 						});
 						newEntry.appendTo(breadcrumbsDiv);
-	
+
 						var isLastEntry = index == pathArray.length - 1;
-						if(!isLastEntry) {
+						if (!isLastEntry) {
 							var link = $("<a />", {
-								html : name,
+								html: name,
 								href: '#'
 							});
 							link.appendTo(newEntry);
@@ -74,12 +78,12 @@ export class LoadDialog {
 					});
 				}
 			}
-	
+
 			// list
 			{
 				var contentDiv = $("#loadDialog-content");
 				contentDiv.empty();
-	
+
 				// list subfolders
 				data.content.subFolders.forEach(item => {
 					var newEntry = $(`<a href="#" class="list-group-item list-group-item-action">
@@ -90,7 +94,7 @@ export class LoadDialog {
 						this.refresh(item.path)
 					});
 				});
-	
+
 				// list projects
 				data.content.projects.forEach(item => {
 					var newEntry = $(`<a href="#" class="list-group-item list-group-item-action">
@@ -109,10 +113,13 @@ export class LoadDialog {
 		$.ajax({
 			url: "/Application/LoadProject",
 			data: {
-				projectFolderPath : projectFolderPath
+				projectFolderPath: projectFolderPath
 			}
-		}).then(function(data) {
+		}).then(function (data) {
 			$('#loadModal').modal('hide');
+			rulrWindow.refresh();
 		});
 	}
 }
+
+export { LoadProjectDialog };

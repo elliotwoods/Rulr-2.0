@@ -34,8 +34,11 @@ if __name__ == "__main__":
 
 	# Turn off verbose werkzeug logging
 	import logging
-	werkzeugLog = logging.getLogger('werkzeug')
-	werkzeugLog.setLevel(logging.WARNING)
+	#werkzeugLog = logging.getLogger('werkzeug')
+	#werkzeugLog.setLevel(logging.WARNING)
 	
 	# Run the hosting
-	run_simple('localhost', 4000, apiWithStatic)
+	run_simple('localhost'
+	, 4000
+	, apiWithStatic
+	, threaded=True)

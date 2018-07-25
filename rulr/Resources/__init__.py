@@ -1,4 +1,5 @@
 import falcon
+import falcon.http_status
 import traceback
 import json
 import pkgutil
@@ -32,6 +33,9 @@ class Base(object):
 				'content' : content
 			}
 		except Exception as e:
+			if issubclass(e.__class__, falcon.http_status.HTTPStatus):
+				raise e
+			
 			exc_tb = sys.exc_info()[2]
 			tracebackList = traceback.extract_tb(exc_tb, 5)
 
