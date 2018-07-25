@@ -4,6 +4,8 @@ let loadDialog = new LoadDialog();
 
 import * as $ from "jquery"
 import * as THREE from 'three'
+import 'three/examples/js/controls/OrbitControls';
+import 'three/examples/js/Detector';
 
 var scene, camera, controls, renderer, stats;
 var geometry, material, mesh;
@@ -26,6 +28,7 @@ $(document).ready(function() {
 	$("#placeholder-LoadProjectModal").load("Interface/LoadProjectModal.html", function() {
 		loadDialog.show();
 	});
+	alert('loaded');
 });
 
 function init() {

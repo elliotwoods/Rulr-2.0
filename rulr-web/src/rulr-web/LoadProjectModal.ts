@@ -2,7 +2,7 @@ import * as $ from "jquery"
 
 export class LoadDialog {
 	constructor() {
-		alert('constructor');
+		alert('up to date');
 	}
 
 	show() {
