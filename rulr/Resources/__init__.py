@@ -4,36 +4,25 @@ import json
 import pkgutil
 import os.path
 import inspect
+import sys
 
 class Base(object):
 	def __init__(self):
-		# Check if we have a custom URL
-		if not hasattr(self, 'url'):
-			# Otherwise set our URL to match out ModuleName/ClassName
-			moduleName = self.__module__
-			standardModulePrefix = 'rulr.Resources'
-			if moduleName.startswith(standardModulePrefix):
-				moduleName = moduleName[len(standardModulePrefix):]
+		pass
 
-			# Add preceeding / if there is a module name
-			if len(moduleName) > 0:
-				moduleName = "/" + moduleName
-			self.url = "{0}/{1}".format(moduleName, self.__class__.__name__)
+	def perform(self, requestObject):
+		raise Exception("Perform is not implemented")
 
 	def on_get(self, req, resp):
-		if hasattr(self, 'GET'):
-			requestObject = falcon.uri.parse_query_string(req.query_string)
-			self.handleRequest(self.GET, requestObject, resp)
-		else:
-			self.handleRequest(self.notImplemented, 'GET', resp)
+		requestObject = self.defaultRequestParameters()
+		requestObject.update(falcon.uri.parse_query_string(req.query_string))
+		self.handleRequest(self.perform, requestObject, resp)
 
 	def on_post(self, req, resp):
-		if hasattr(self, 'POST'):
-			postBody = req.stream.read()
-			requestObject = json.loads(postBody)
-			self.handleRequest(self.POST, requestObject, resp)
-		else:
-			self.handleRequest(self.notImplemented, 'POST', resp)
+		postBody = req.stream.read()
+		requestObject = self.defaultRequestParameters()
+		requestObject.update(json.loads(postBody))
+		self.handleRequest(self.perform, requestObject, resp)
 
 	def handleRequest(self, responseFunction, requestObject, resp):
 		try:
@@ -43,16 +32,26 @@ class Base(object):
 				'content' : content
 			}
 		except Exception as e:
+			exc_tb = sys.exc_info()[2]
+			tracebackList = traceback.extract_tb(exc_tb, 5)
+
+			formattedList = []
+			for tracebackEntry in tracebackList:
+				formattedList.append({
+					"name" : tracebackEntry.name,
+					"filename" : tracebackEntry.filename,
+					"line number" : tracebackEntry.lineno,
+					"line" : tracebackEntry.line
+				})
+
 			resp.media = {
 				'success' : False,
 				'exception' : str(e),
-				'traceback' : traceback.format_exc(5)
+				'traceback' : formattedList
 			}
 
-	@staticmethod
-	def notImplemented(methodName):
-		raise Exception("Method '{0}' is not implemented".format(methodName))
-
+	def defaultRequestParameters(self):
+		return {}
 
 class Echo(Base):
 	def GET(self, args):
@@ -75,9 +74,13 @@ def traverseModule(api, packagePath, urlPath):
 				if classMember[0] == 'Resource':
 					# If we found a Resource class, create an instance of it and add a route to it
 					resourceInstance = classMember[1]()
-					url = resourceInstance.url
-					print("Add route '{0}' -> '{1}".format(url, resourceInstance))
-					api.add_route(url, resourceInstance)
+					
+					# Assign an automatic url if the resource does not have one
+					if hasattr(resourceInstance, 'url') is False:
+						resourceInstance.url = innerUrl
+
+					print("Add route '{0}' -> '{1}".format(resourceInstance.url, resourceInstance))
+					api.add_route(resourceInstance.url, resourceInstance)
 
 # Perform this import so we can get the path for the package
 import rulr.Resources

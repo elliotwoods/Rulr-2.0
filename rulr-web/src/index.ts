@@ -1,8 +1,17 @@
+import {LoadDialog} from './rulr-web/LoadProjectModal'
+
+let loadDialog = new LoadDialog();
+
+/*
+import * as $ from "jquery"
+import * as THREE from 'three'
+
 var scene, camera, controls, renderer, stats;
 var geometry, material, mesh;
 var raycaster, mousePosition, projector;
 
 var rootNode;
+var container;
 
 var scaleFactor = 1.0;
 var forEach = Array.prototype.forEach;
@@ -12,19 +21,16 @@ var renderSize = {
 	height: 100
 };
 
-init();
-animate();
-
 $(document).ready(function() {
 	$("#placeholder-Inspector").load("Interface/Inspector.html");
 	$("#placeholder-WorldExplorer").load("Interface/WorldExplorer.html");
-	$("#placeholder-LoadSessionModal").load("Interface/LoadSessionModal.html", function() {
+	$("#placeholder-LoadProjectModal").load("Interface/LoadProjectModal.html", function() {
 		showLoadDialog();
 	});
 });
 
 function init() {
-	if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+	//if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
 
 	scene = new THREE.Scene();
 	var inspectorContentDiv = document.getElementById('inspectorContent');
@@ -58,7 +64,7 @@ function init() {
 	renderer.domElement.addEventListener( 'mousedown', onDocumentMouseDown, false );
 	renderer.domElement.addEventListener( 'mouseup', onDocumentMouseUp, false );
 
-	jQuery(renderer.domElement).dblclick(doubleClick);
+	$(renderer.domElement).dblclick(doubleClick);
 
 	{
 		var minor = new THREE.GridHelper(40.0, 400 / 2, 0xeeeeee, 0xeeeeee);
@@ -67,8 +73,6 @@ function init() {
 
 	onWindowResize();
 	render();
-
-	showLoadDialog();
 }
 
 function doubleClick() {
@@ -99,10 +103,9 @@ function onDocumentMouseUp(event) {
 	//sceneObjects.mouseUp(event);
 }
 
-function animate(time) {
+function animate() {
 	requestAnimationFrame(animate);
 
-	TWEEN.update(time);
 	controls.update();
 
 	raycast();
@@ -122,22 +125,6 @@ function raycast() {
 	//sceneObjects.updateHover(raycaster);
 }
 
-function showLoadDialog() {
-	$.ajax({
-		url: "/Sessions/List"
-	}).then(function(data) {
-		if(data.success) {
-			var contentDiv = $("#loadDialog-content");
-			contentDiv.empty();
-
-			data.content.forEach(function(sessionListItem) {
-				if(sessionListItem.hasThumbnail) {
-
-				}
-
-				contentDiv.append(`<a href="#" class="list-group-item list-group-item-action">${sessionListItem.relativePath}</a>`);
-			});
-			$('#loadModal').modal({});
-		}
-	});
-}
+init();
+animate();
+*/

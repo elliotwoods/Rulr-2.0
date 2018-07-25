@@ -1,5 +1,5 @@
 import transforms3d
-import rulr.Nodes.Base
+import rulr.Nodes
 
 class Grid(rulr.Nodes.Base):
 	def __init__(self):

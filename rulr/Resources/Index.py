@@ -6,5 +6,5 @@ class Resource(rulr.Resources.Base):
 		self.url = '/'
 		super()
 	
-	def on_get(self, req, resp):
+	def request(self, req, resp):
 		raise falcon.HTTPFound("/Client/html/index.html")

@@ -5,7 +5,6 @@ from werkzeug.serving import run_simple
 from werkzeug.wsgi import SharedDataMiddleware
 
 import rulr.Nodes
-import rulr.Sessions
 import rulr.Resources
 
 if __name__ == "__main__":
@@ -33,5 +32,10 @@ if __name__ == "__main__":
 		'/Client' : (os.path.join(os.path.dirname(__file__), '..', 'rulr-web'))
 	})
 
+	# Turn off verbose werkzeug logging
+	import logging
+	werkzeugLog = logging.getLogger('werkzeug')
+	werkzeugLog.setLevel(logging.WARNING)
+	
 	# Run the hosting
 	run_simple('localhost', 4000, apiWithStatic)
