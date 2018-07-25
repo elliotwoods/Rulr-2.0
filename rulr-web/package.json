@@ -8,7 +8,9 @@
         "popper.js": "^1.14.3",
         "three": "^0.94.0",
         "ts-loader": "^4.4.2",
-        "typescript": "^2.9.2"
+        "typescript": "^2.9.2",
+        "webpack": "^4.16.2",
+        "webpack-cli": "^3.1.0"
     },
     "devDependencies": {
         "@types/jquery": "^3.3.5"

@@ -2,7 +2,6 @@ import {LoadDialog} from './rulr-web/LoadProjectModal'
 
 let loadDialog = new LoadDialog();
 
-/*
 import * as $ from "jquery"
 import * as THREE from 'three'
 
@@ -25,7 +24,7 @@ $(document).ready(function() {
 	$("#placeholder-Inspector").load("Interface/Inspector.html");
 	$("#placeholder-WorldExplorer").load("Interface/WorldExplorer.html");
 	$("#placeholder-LoadProjectModal").load("Interface/LoadProjectModal.html", function() {
-		showLoadDialog();
+		loadDialog.show();
 	});
 });
 
@@ -127,4 +126,3 @@ function raycast() {
 
 init();
 animate();
-*/
