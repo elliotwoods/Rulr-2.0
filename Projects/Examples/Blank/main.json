@@ -1,6 +1,16 @@
 {
-	"moduleName" : "Debug",
-	"className" : "Grid",
-	"name" : "Grid 1",
-	"ID" : 0
+	"moduleName" : "Group",
+	"name" : "Group",
+	"ID" : 0,
+	"content" : {
+		"children" : [
+			{
+				"moduleName" : "Grid",
+				"name" : "Grid",
+				"ID" : 0,
+				"content" : {
+				}
+			}
+		]
+	}
 }

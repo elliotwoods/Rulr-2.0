@@ -21,7 +21,7 @@ if __name__ == "__main__":
 	})
 	"""
 
-	api = falcon.API()	
+	api = falcon.API()
 
 	# Auto-handle all resources
 	rulr.Resources.initializeResources(api)

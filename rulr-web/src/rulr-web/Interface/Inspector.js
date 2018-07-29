@@ -1,7 +1,7 @@
 class Inspector {
 	constructor() {
 		$(document).ready(function() {
-			$("#placeholder-Inspector").load("Interface/Inspector.html", function() {
+			$("#Inspector-placeholder").load("Interface/Inspector.html", function() {
 				
 			});
 		});	

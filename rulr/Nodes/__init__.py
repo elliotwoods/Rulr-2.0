@@ -7,7 +7,7 @@ from enum import Enum
 class Base:
 	def __init__(self):
 		self.ID = 0
-		self.name = ""
+		self.name = self.getModuleName()
 		self.children = []
 		self.parameters = rulr.Utils.Parameters.ParameterGroup("Base")
 		
@@ -17,57 +17,44 @@ class Base:
 
 	def deserialize(self, description):
 		pass
-	
-	def find(self, nodeID):
-		if nodeID == self.ID:
-			return self
-		
-		for child in self.children:
-			foundNode = child.find(nodeID)
-			if foundNode != None:
-				return foundNode
 
-		return None
-	
-	def getNextAvailableChildID(self):
-		if len(self.children) == 0:
-			return 0
-		else:
-			childIDS = []
-			for child in self.children:
-				childIDS.append(child.ID)
-			return sorted(childIDS)[-1] + 1
+	def serialize(self):
+		pass
+
+	def getHeaderDescription(self):
+		return {
+			"moduleName" : self.getModuleName(),
+			"name" : self.name,
+			"ID" : self.ID
+		}
 
 	def getModuleName(self):
 		longName = self.__class__.__module__
 		shortName = longName[len("rulr.Nodes."):]
 		return shortName
 
-	def getClassName(self):
-		return self.__class__.__name__
+	def getChildByPath(self, nodePath):
+		if nodePath == []:
+			return self
+		else:
+			nodePathString = rulr.Utils.nodePathToString(nodePath)
+			ourModuleName = self.__module__
+			raise Exception("Cannot get child with nodePath=[{0}]. This node is not a Group, it is a [{1}]".format(nodePathString, ourModuleName))
 
-def fromDescription(description, parentNode):
+
+
+def fromDescription(description):
 	module = importlib.import_module('rulr.Nodes.' + description['moduleName'])
-	newClassType = getattr(module, description['className'])
-	instance = newClassType()
+	newNodeInstance = module.Node()
 
 	if 'id' in description:
-		instance.ID = description['ID']
-	else:
-		if parentNode is None:
-			instance.ID = 0
-		else:
-			instance.ID = parentNode.getNextAvailableChildID()
+		newNodeInstance.ID = description['ID']
 
 	if 'name' in description:
-		instance.name = description['name']
+		newNodeInstance.name = description['name']
 
 	if 'content' in description:
-		instance.deserialize(description['content'])
+		newNodeInstance.deserialize(description['content'])
 
-	if 'children' in description:
-		for childDescription in description['children']:
-			child = fromDescription(childDescription, instance)
-			instance.children.append(child)
-	return instance
+	return newNodeInstance
 	

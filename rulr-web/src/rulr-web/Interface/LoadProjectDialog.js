@@ -1,4 +1,5 @@
 import { rulrWindow } from './Window.js'
+import * as Utils from '../../Utils.js'
 
 class LoadProjectDialog {
 	constructor() {
@@ -15,19 +16,17 @@ class LoadProjectDialog {
 	}
 
 	refresh(folderPath) {
-		$.ajax({
-			url: "/Application/ListProjects",
-			data: {
+		Utils.request("/Application/ListProjects",
+			{
 				folderPath: folderPath
-			}
-		}).then(data => {
-			if (data.success) {
+			},
+			data => {
 				// breadcrumbs
 				{
 					var breadcrumbsDiv = $("#loadDialog-breadcrumb");
 					breadcrumbsDiv.empty();
 
-					var pathArray = data.content.selectedPath.split("/");
+					var pathArray = data.selectedPath.split("/");
 
 					//filter empties
 					pathArray = pathArray.filter(function (pathEntry) {
@@ -77,48 +76,44 @@ class LoadProjectDialog {
 						}
 					});
 				}
-			}
+				// list
+				{
+					var contentDiv = $("#loadDialog-content");
+					contentDiv.empty();
 
-			// list
-			{
-				var contentDiv = $("#loadDialog-content");
-				contentDiv.empty();
-
-				// list subfolders
-				data.content.subFolders.forEach(item => {
-					var newEntry = $(`<a href="#" class="list-group-item list-group-item-action">
-						<i class="fas fa-folder-open"></i>&nbsp; ${item.name}
-					</a>`);
-					newEntry.appendTo(contentDiv);
-					newEntry.click(() => {
-						this.refresh(item.path)
+					// list subfolders
+					data.subFolders.forEach(item => {
+						var newEntry = $(`<a href="#" class="list-group-item list-group-item-action">
+							<i class="fas fa-folder-open"></i>&nbsp; ${item.name}
+						</a>`);
+						newEntry.appendTo(contentDiv);
+						newEntry.click(() => {
+							this.refresh(item.path)
+						});
 					});
-				});
 
-				// list projects
-				data.content.projects.forEach(item => {
-					var newEntry = $(`<a href="#" class="list-group-item list-group-item-action">
-						<i class="fas fa-file"></i>&nbsp; ${item.name}
-					</a>`);
-					newEntry.appendTo(contentDiv);
-					newEntry.click(() => {
-						this.loadProject(item.path)
+					// list projects
+					data.projects.forEach(item => {
+						var newEntry = $(`<a href="#" class="list-group-item list-group-item-action">
+							<i class="fas fa-file"></i>&nbsp; ${item.name}
+						</a>`);
+						newEntry.appendTo(contentDiv);
+						newEntry.click(() => {
+							this.loadProject(item.path)
+						});
 					});
-				});
-			}
-		});
+				}
+			});
 	}
 
 	loadProject(projectFolderPath) {
-		$.ajax({
-			url: "/Application/LoadProject",
-			data: {
+		Utils.request("/Application/LoadProject",
+			{
 				projectFolderPath: projectFolderPath
-			}
-		}).then(function (data) {
-			$('#loadModal').modal('hide');
-			rulrWindow.refresh();
-		});
+			}, data => {
+				$('#loadModal').modal('hide');
+				rulrWindow.refresh();
+			});
 	}
 }
 

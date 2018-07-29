@@ -1,9 +1,9 @@
 import transforms3d
 import rulr.Nodes
 
-class Grid(rulr.Nodes.Base):
+class Node(rulr.Nodes.Base):
 	def __init__(self):
-		super(Grid, self).__init__()
+		super(Node, self).__init__()
 
 		self.addParameterBlock("Grid", {
 			'roomMinimum' : [-1, -1, 0],

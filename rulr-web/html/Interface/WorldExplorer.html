@@ -1,6 +1,25 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 	<span class="navbar-brand" id="title">World Explorer</span>
 </nav>
-<div id="content-WorldExplorer">
-	
+<div id="WorldExplorer-content">
+	<div class="list-group" id="WorldExplorer-list">
+
+	</div>
 </div>
+
+<template id="WorldExplorer-NodeTemplate">
+	<div class="WorldExplorer-NodeItem">
+		<a href="#" class="list-group-item list-group-item-action flex-column align-items-start active">
+			<div class="d-flex w100 justify-content-between">
+				<h5 class="mb-1" id="name">{Node name}</h5>
+				<small id="module">{Node module}</small>
+			</div>
+			<p clas="mb-1" id="description">
+				{Description of the module}
+			</p>
+			<small id="footer">
+				{Footer for module}
+			</small>
+		</a>
+	</div>
+</template>

@@ -1,40 +1,37 @@
+import * as Utils from '../../Utils.js'
+
 class WorldExplorer {
 	constructor() {
 		$(document).ready(function () {
-			$("#placeholder-WorldExplorer").load("Interface/WorldExplorer.html", function () {
+			$("#WorldExplorer-placeholder").load("Interface/WorldExplorer.html", function () {
 
 			});
 		});
+
+		self.nodePath = [];
 	}
 
 	refresh() {
-		$.ajax({
-			url: "/Application/GetNodeTree"
-		}).then(data => {
-			if (data.success) {
-				//build up a tree data structure
-				var tree = populateBranch(data.content.rootNode);
+		Utils.request("/Application/Graph/GetNodeList"
+		, {
+			nodePath : self.nodePath
+		}, responseContent => {
+			var listDiv = $("#WorldExplorer-list");
+			listDiv.empty();
 
-				//apply to the tree view
-				$('#tree-WorldExplorer').treeview({
-					data: tree
-				});
-			}
+			var nodeItemTemplate = $("#WorldExplorer-NodeTemplate");
+
+			responseContent.forEach(child => {
+				var newEntry = $(nodeItemTemplate.first().html());
+				newEntry.find('#name').text(child.name);
+				newEntry.find('#footer').text('#' + str(child.ID));
+				newEntry.find('#module').text(child.moduleName);
+				newEntry.find('#description').text("description of node");
+
+				newEntry.appendTo(listDiv);
+			});
 		})
 	}
-}
-
-function populateBranch(description) {
-	var branch = {
-		text : description.name,
-		nodes : []
-	};
-
-	description.children.forEach(child => {
-		nodes.push(populateBranch(child));
-	});
-
-	return branch;
 }
 
 export { WorldExplorer };

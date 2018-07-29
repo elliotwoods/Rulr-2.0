@@ -58,11 +58,8 @@ class Base(object):
 		return {}
 
 class Echo(Base):
-	def GET(self, args):
-		return args
-
-	def POST(self, args):
-		return args
+	def perform(self, requestObject):
+		return requestObject
 
 def traverseModule(api, packagePath, urlPath):
 	for importer, moduleName, isPackage in pkgutil.iter_modules(packagePath):
