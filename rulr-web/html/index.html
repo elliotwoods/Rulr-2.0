@@ -7,11 +7,12 @@
 	<title>Rulr</title>
 
 	<script src="../node_modules/jquery/dist/jquery.min.js"></script>
-	
+
 	<link rel="stylesheet" href="../css/bootstrap.min.css">
 	<script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ"
+	 crossorigin="anonymous">
 
 	<style>
 		#annotations {
@@ -35,8 +36,8 @@
 
 <body>
 	<div class="row" style="height: 100%">
-		<div class="col-sm-8" id="mainView">
-			<div id="annotations"></div>
+		<div class="col-sm-8" id="Viewport-container">
+			<div id="Viewport-placeholder">Viewport</div>
 		</div>
 		<div class="col-sm-4" id="detailView" style="height: 100vh;">
 			<div id="WorldExplorer-placeholder">World Explorer</div>
@@ -44,7 +45,7 @@
 		</div>
 	</div>
 
-	<div id="placeholder-LoadProjectModal"></div>
+	<div id="LoadProjectModal-placeholder"></div>
 
 	<script src="../node_modules/three/build/three.js"></script>
 	<script src="../node_modules/three/examples/js/controls/OrbitControls.js"></script>

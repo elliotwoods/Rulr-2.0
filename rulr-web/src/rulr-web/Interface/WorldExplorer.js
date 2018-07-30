@@ -24,7 +24,7 @@ class WorldExplorer {
 			responseContent.forEach(child => {
 				var newEntry = $(nodeItemTemplate.first().html());
 				newEntry.find('#name').text(child.name);
-				newEntry.find('#footer').text('#' + str(child.ID));
+				newEntry.find('#footer').text('#' + child.ID);
 				newEntry.find('#module').text(child.moduleName);
 				newEntry.find('#description').text("description of node");
 

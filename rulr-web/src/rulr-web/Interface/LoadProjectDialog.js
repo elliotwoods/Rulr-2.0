@@ -4,7 +4,7 @@ import * as Utils from '../../Utils.js'
 class LoadProjectDialog {
 	constructor() {
 		$(document).ready(() => {
-			$("#placeholder-LoadProjectModal").load("Interface/LoadProjectModal.html", () => {
+			$("#LoadProjectModal-placeholder").load("Interface/LoadProjectModal.html", () => {
 				this.show();
 			});
 		});
