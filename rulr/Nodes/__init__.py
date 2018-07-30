@@ -28,6 +28,23 @@ class Base:
 			"ID" : self.ID
 		}
 
+	def getViewDescription(self, recursive):
+		# Header
+		description = {
+			"header" : self.getHeaderDescription()
+		}
+
+		# Content
+
+
+		# Children
+		if recursive:
+			description["children"] = []
+			for child in self.children:
+				description["children"].append(child.getViewDescription(recursive))
+
+		return description
+
 	def getModuleName(self):
 		longName = self.__class__.__module__
 		shortName = longName[len("rulr.Nodes."):]
@@ -40,6 +57,7 @@ class Base:
 			nodePathString = rulr.Utils.nodePathToString(nodePath)
 			ourModuleName = self.__module__
 			raise Exception("Cannot get child with nodePath=[{0}]. This node is not a Group, it is a [{1}]".format(nodePathString, ourModuleName))
+
 
 
 

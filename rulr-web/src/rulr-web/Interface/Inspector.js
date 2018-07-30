@@ -1,14 +1,8 @@
-class Inspector {
-	constructor() {
-		$(document).ready(function() {
-			$("#Inspector-placeholder").load("Interface/Inspector.html", function() {
-				
-			});
-		});	
-	}
+import { Element } from './Element.js'
 
-	refresh() {
-		
+class Inspector extends Element {
+	constructor() {
+		super();
 	}
 }
 

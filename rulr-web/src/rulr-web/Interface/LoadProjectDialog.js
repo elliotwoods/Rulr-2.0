@@ -1,13 +1,10 @@
-import { rulrWindow } from './Window.js'
-import * as Utils from '../../Utils.js'
+import { application } from '../Application.js'
+import * as Utils from '../Utils.js'
+import { Element } from './Element.js'
 
-class LoadProjectDialog {
+class LoadProjectDialog extends Element {
 	constructor() {
-		$(document).ready(() => {
-			$("#LoadProjectModal-placeholder").load("Interface/LoadProjectModal.html", () => {
-				this.show();
-			});
-		});
+		super();
 	}
 
 	show() {
@@ -112,7 +109,7 @@ class LoadProjectDialog {
 				projectFolderPath: projectFolderPath
 			}, data => {
 				$('#loadModal').modal('hide');
-				rulrWindow.refresh();
+				application.refresh();
 			});
 	}
 }

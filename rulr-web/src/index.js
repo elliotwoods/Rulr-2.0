@@ -1,3 +1,3 @@
-import { rulrWindow } from './rulr-web/Interface/Window.js'
+import { application } from './rulr-web/Application.js'
 
-rulrWindow;
+application;

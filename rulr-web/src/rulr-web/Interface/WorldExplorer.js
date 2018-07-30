@@ -1,20 +1,16 @@
-import * as Utils from '../../Utils.js'
+import * as Utils from '../Utils.js'
+import { Element } from './Element.js'
 
-class WorldExplorer {
+class WorldExplorer extends Element {
 	constructor() {
-		$(document).ready(function () {
-			$("#WorldExplorer-placeholder").load("Interface/WorldExplorer.html", function () {
-
-			});
-		});
-
-		self.nodePath = [];
+		super();
+		this.nodePath = [];
 	}
 
 	refresh() {
 		Utils.request("/Application/Graph/GetNodeList"
 		, {
-			nodePath : self.nodePath
+			nodePath : this.nodePath
 		}, responseContent => {
 			var listDiv = $("#WorldExplorer-list");
 			listDiv.empty();

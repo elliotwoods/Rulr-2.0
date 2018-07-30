@@ -53,6 +53,8 @@ class Base(object):
 				'exception' : str(e),
 				'traceback' : formattedList
 			}
+			
+			resp.status = falcon.HTTP_INTERNAL_SERVER_ERROR
 
 	def defaultRequestParameters(self):
 		return {}

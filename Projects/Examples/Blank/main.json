@@ -5,7 +5,7 @@
 	"content" : {
 		"children" : [
 			{
-				"moduleName" : "Grid",
+				"moduleName" : "Debug.Grid",
 				"name" : "Grid",
 				"ID" : 0,
 				"content" : {

@@ -29,7 +29,8 @@ if __name__ == "__main__":
 	# Build a new api which handles static files
 	clientFilesPath = os.path.abspath('Client')
 	apiWithStatic = SharedDataMiddleware(api, {
-		'/Client' : (os.path.join(os.path.dirname(__file__), '..', 'rulr-web'))
+		'/Client' : (os.path.join(os.path.dirname(__file__), '..', 'rulr-web')),
+		'/Nodes' : (os.path.join(os.path.dirname(__file__), 'Nodes'))
 	})
 
 	# Turn off verbose werkzeug logging

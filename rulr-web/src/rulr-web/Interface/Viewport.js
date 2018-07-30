@@ -1,9 +1,12 @@
-import * as Utils from '../../Utils.js'
+import * as Utils from '../Utils.js'
+import { Element } from './Element.js'
 
 var scaleFactor = 1.0;
 
-class Viewport {
+class Viewport extends Element {
 	constructor() {
+		super();
+
 		this.scene = null;
 		this.raycaster = null;
 		this.mousePosition = null;
@@ -14,13 +17,8 @@ class Viewport {
 			height: 100
 		};
 
-		this.loaded = false;
-
-		$(document).ready(() => {
-			$("#Viewport-placeholder").load("Interface/Viewport.html", () => {
-				this.init();
-				this.loaded = true;
-			});
+		this.whenReady(() => {
+			this.init();
 		});
 	}
 
@@ -91,9 +89,12 @@ class Viewport {
 	refresh(folderPath) {
 		Utils.request("/Application/Viewport/Refresh",
 			{
+				/*
+				* Keep a dictionary of scene object vs nodepath
+				* Keep a dictionary of node modules
+				*/
 			},
 			data => {
-
 			});
 	}
 
