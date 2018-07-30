@@ -11,15 +11,14 @@ class Window {
 		this.loadProjectDialog = new LoadProjectDialog();
 	}
 
-	async refresh() {
-		await 
+	refresh() {
 		this.viewport.refresh();
 		this.worldExplorer.refresh();
 		this.inspector.refresh();
 	}
 
 	update() {
-		if(this.viewport.loaded) {
+		if(this.viewport.ready) {
 			this.viewport.update();
 		}
 	}

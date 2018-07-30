@@ -5,6 +5,9 @@ class Base {
 		this.header = {};
 		this.nodePath = [];
 		this.children = [];
+		this.moduleName = '';
+
+		this.viewportObject = new THREE.Object3D();
 	}
 
 	refresh() {
@@ -17,8 +20,24 @@ class Base {
 		});
 	}
 
-	refresh(description) {
-		Utils.request("/")
+	getChildByID(ID) {
+		this.children.forEach((child) => {
+			if(child.header.ID == ID) {
+				return child;
+			}
+		});
+
+		throw(`Child #${ID} not found`);
+	}
+
+	getChildByPath(nodePath) {
+		if(nodePath.length == 0) {
+			return this;
+		}
+		else {
+			var child = this.getChildByID(nodePath[0]);
+			return child.getChildByPath(nodePath.slice(1));
+		}
 	}
 }
 

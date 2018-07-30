@@ -4,10 +4,16 @@ import rulr.Utils.Parameters
 
 from enum import Enum
 
-class Base:
+class Header:
 	def __init__(self):
 		self.ID = 0
-		self.name = self.getModuleName()
+		self.name = ""
+		self.visible = True
+	
+class Base:
+	def __init__(self):
+		self.header = Header()
+		self.header.name = self.getModuleName()
 		self.children = []
 		self.parameters = rulr.Utils.Parameters.ParameterGroup("Base")
 		
@@ -21,17 +27,11 @@ class Base:
 	def serialize(self):
 		pass
 
-	def getHeaderDescription(self):
-		return {
-			"moduleName" : self.getModuleName(),
-			"name" : self.name,
-			"ID" : self.ID
-		}
-
 	def getViewDescription(self, recursive):
 		# Header
 		description = {
-			"header" : self.getHeaderDescription()
+			"header" : self.header.__dict__,
+			"module" : self.__module__[len("rulr.Nodes."):]
 		}
 
 		# Content
@@ -66,7 +66,7 @@ def fromDescription(description):
 	newNodeInstance = module.Node()
 
 	if 'id' in description:
-		newNodeInstance.ID = description['ID']
+		newNodeInstance.header.ID = description['ID']
 
 	if 'name' in description:
 		newNodeInstance.name = description['name']

@@ -1,32 +1,31 @@
 import * as Utils from '../Utils.js'
 import { Element } from './Element.js'
+import { application } from '../Application.js'
 
 class WorldExplorer extends Element {
 	constructor() {
 		super();
-		this.nodePath = [];
 	}
 
 	refresh() {
-		Utils.request("/Application/Graph/GetNodeList"
-		, {
-			nodePath : this.nodePath
-		}, responseContent => {
-			var listDiv = $("#WorldExplorer-list");
-			listDiv.empty();
+		var listDiv = $("#WorldExplorer-list");
+		listDiv.empty();
 
-			var nodeItemTemplate = $("#WorldExplorer-NodeTemplate");
+		var nodeItemTemplateHTML = $("#WorldExplorer-NodeTemplate").first().html();
 
-			responseContent.forEach(child => {
-				var newEntry = $(nodeItemTemplate.first().html());
-				newEntry.find('#name').text(child.name);
-				newEntry.find('#footer').text('#' + child.ID);
+		if(application.rootNode != null) {
+			var currentGroupNode = application.rootNode.getChildByPath(application.explorerNodePath);
+
+			currentGroupNode.children.forEach(child => {
+				var newEntry = $(nodeItemTemplateHTML);
+				newEntry.find('#name').text(child.header.name);
+				newEntry.find('#footer').text('#' + child.header.ID);
 				newEntry.find('#module').text(child.moduleName);
 				newEntry.find('#description').text("description of node");
 
 				newEntry.appendTo(listDiv);
 			});
-		})
+		}
 	}
 }
 

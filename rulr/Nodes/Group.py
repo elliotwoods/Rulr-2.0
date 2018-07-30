@@ -17,9 +17,9 @@ class Node(rulr.Nodes.Base):
 	def checkForChildIDConflicts(self):
 		IDsInUse = []
 		for child in self.children:
-			if child.ID in IDsInUse:
-				child.ID = self.getNextAvailableChildID()
-			IDsInUse.append(child.ID)
+			if child.header.ID in IDsInUse:
+				child.header.ID = self.getNextAvailableChildID()
+			IDsInUse.append(child.header.ID)
 
 	def deserialize(self, description):
 		if 'children' in description:
@@ -30,7 +30,7 @@ class Node(rulr.Nodes.Base):
 
 	def getChildByID(self, childID):
 		for child in self.children:
-			if child.ID == childID:
+			if child.header.ID == childID:
 				return child
 		raise Exception("Node does not have child with ID={0}".format(childID))
 

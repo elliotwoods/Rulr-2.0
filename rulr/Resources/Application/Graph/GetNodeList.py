@@ -23,6 +23,6 @@ class Resource(rulr.Resources.Base):
 		childrenDescriptions = []
 
 		for child in node.children:
-			childrenDescriptions.append(child.getHeaderDescription())
+			childrenDescriptions.append(child.header)
 		
 		return childrenDescriptions

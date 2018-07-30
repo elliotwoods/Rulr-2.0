@@ -1,6 +1,6 @@
 import * as Utils from '../Utils.js'
 import { Element } from './Element.js'
-
+import { application } from '../Application.js'
 var scaleFactor = 1.0;
 
 class Viewport extends Element {
@@ -73,29 +73,28 @@ class Viewport extends Element {
 			jQuery(this.renderer.domElement).dblclick(this.doubleClick);
 		}
 
-		// Create a grid (remove this later)
-		{
-			var minor = new THREE.GridHelper(40.0, 400 / 2, 0xeeeeee, 0xeeeeee);
-			this.scene.add(minor);
-		}
-
 		// Initialise the first render
 		{
-			this.refresh();
 			this.onWindowResize();
 		}
 	}
 
-	refresh(folderPath) {
-		Utils.request("/Application/Viewport/Refresh",
-			{
-				/*
-				* Keep a dictionary of scene object vs nodepath
-				* Keep a dictionary of node modules
-				*/
-			},
-			data => {
-			});
+	async refresh() {
+		var visibleNodes = application.getVisibleNodes();
+
+		var visibleViewportObjects = [];
+		visibleNodes.forEach((node) => {
+			if(!this.scene.children.includes(node.viewportObject)) {
+				this.scene.add(node.viewportObject);
+			}
+			visibleViewportObjects.push(node.viewportObject)
+		});
+
+		this.scene.children.forEach((sceneObject) => {
+			if(!visibleViewportObjects.includes(sceneObject)) {
+				this.scene.remove(sceneObject);
+			}
+		});
 	}
 
 	doubleClick() {

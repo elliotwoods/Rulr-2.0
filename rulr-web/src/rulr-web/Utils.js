@@ -2,6 +2,11 @@ export function request(url, requestData, responseFunction, errorFunction = (err
 	$.ajax({
 		url : url,
 		data : requestData,
+		success : (response) => {
+			if (response.success) {
+				responseFunction(response.content);
+			}
+		},
 		error : (request, errorType, errorString) => {
 			errorFunction({
 				request : request,
@@ -9,11 +14,13 @@ export function request(url, requestData, responseFunction, errorFunction = (err
 				errorString : errorString
 			});
 		}
-	}).then(response => {
-		if (response.success) {
-			responseFunction(response.content);
-		}
 	});
+}
+
+export async function asyncForEach(array, action) {
+	for(let index=0; index < array.length; index++) {
+		await action(array[index], index, array);
+	}
 }
 
 export async function asyncRequest(url, requestData, responseFunction, errorFunction = (error) => {}) {
@@ -28,19 +35,21 @@ export async function asyncRequest(url, requestData, responseFunction, errorFunc
 	})
 }
 
-export async function fromViewDescription(description) {
+export async function fromViewDescriptionAsync(description) {
 	var header = description.header;
-	var module = await import('./Nodes/' + header.moduleName.replace('.', '/') + '.js');
+	var module = await import('./Nodes/' + description.module.replace('.', '/') + '.js');
 	var newNodeInstance = new module.Node();
 
 	// Header
 	newNodeInstance.header = header;
+	newNodeInstance.moduleName = description.module;
 
 	// Content
 
 	// Children
-	description.children.forEach((childDescription) => {
-		newNodeInstance.children.push(fromViewDescription(childDescription));
+	await asyncForEach(description.children, async (childDescription) => {
+		var childNodeInstance = await fromViewDescriptionAsync(childDescription);
+		newNodeInstance.children.push(childNodeInstance);
 	});
 
 	return newNodeInstance;
