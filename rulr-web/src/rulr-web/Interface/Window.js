@@ -21,6 +21,9 @@ class Window {
 		if(this.viewport.ready) {
 			this.viewport.update();
 		}
+		if(this.inspector.ready) {
+			this.inspector.update();
+		}
 	}
 }
 

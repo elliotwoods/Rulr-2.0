@@ -1,26 +1,30 @@
-class Parameter:
-	def __init__(self, name, value):
-		self.name = name
-		self.value = value
+import rulr.Utils
 
-class ParameterGroup:
-	def __init__(self, name):
-		self.name = name
-		self.children = {}
+class Base(object):
+	def __init__(self):
+		pass
 	
-	@classmethod
-	def fromDescription(classType, name, description):
-		parameterGroup = ParameterGroup(name)
+class Vector(rulr.Utils.Viewable):
+	def __init__(self, value):
+		super().__init__()
+		self.value = value
+	
+	def getViewDescriptionContent(self, viewDescriptionArguments):
+		return {
+			"value" : self.value.tolist()
+		}
 
-		for name in description:
-			content = description[name]
+class BoundVector(Vector):
+	def __init__(self, value, lowerLimit, upperLimit, step = 0.0):
+		super().__init__(value)
+		self.lowerLimit = lowerLimit
+		self.upperLimit = upperLimit
+		self.step = step
 
-			if(isinstance(content, dict)):
-				# This is a sub-group
-				child = ParameterGroup.fromDescription(name, content)
-			else:
-				child = Parameter(name, content)
-			
-			parameterGroup.children[name] = child
-			
-		return parameterGroup
+	def getViewDescriptionContent(self, viewDescriptionArguments):
+		return {
+			"value" : self.value.tolist(),
+			"lowerLimit" : self.lowerLimit,
+			"upperLimit" : self.upperLimit,
+			"step" : self.step
+		}

@@ -16,11 +16,11 @@ class WorldExplorer extends Element {
 		if(application.rootNode != null) {
 			var currentGroupNode = application.rootNode.getChildByPath(application.explorerNodePath);
 
-			currentGroupNode.children.forEach(child => {
+			currentGroupNode.children.forEach(childNode => {
 				var newEntry = $(nodeItemTemplateHTML);
-				newEntry.find('#name').text(child.header.name);
-				newEntry.find('#footer').text('#' + child.header.ID);
-				newEntry.find('#module').text(child.moduleName);
+				newEntry.find('#name').text(childNode.header.name);
+				newEntry.find('#footer').text('#' + childNode.header.ID);
+				newEntry.find('#module').text(childNode.moduleName);
 				newEntry.find('#description').text("description of node");
 
 				newEntry.appendTo(listDiv);

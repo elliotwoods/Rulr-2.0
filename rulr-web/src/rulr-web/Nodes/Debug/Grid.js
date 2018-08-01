@@ -10,6 +10,10 @@ class Node extends Base {
 		this.axes = new THREE.AxesHelper(10.0);
 		this.viewportObject.add(this.axes);
 	}
+
+	update() {
+		super.update();		
+	}
 }
 
 export { Node };

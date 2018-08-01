@@ -1,6 +1,5 @@
 import importlib
 import rulr.Utils
-import rulr.Utils.Parameters
 
 from enum import Enum
 
@@ -10,16 +9,13 @@ class Header:
 		self.name = ""
 		self.visible = True
 	
-class Base:
+class Base(rulr.Utils.Viewable):
 	def __init__(self):
 		self.header = Header()
 		self.header.name = self.getModuleName()
 		self.children = []
-		self.parameters = rulr.Utils.Parameters.ParameterGroup("Base")
-		
-
-	def addParameterBlock(self, name, description):
-		self.parameters.children[name] = rulr.Utils.Parameters.ParameterGroup.fromDescription(name, description)
+		self.parameters = rulr.Utils.AutoGroup()
+		self.components = rulr.Utils.AutoGroup()
 
 	def deserialize(self, description):
 		pass
@@ -27,21 +23,21 @@ class Base:
 	def serialize(self):
 		pass
 
-	def getViewDescription(self, recursive):
+	def getViewDescriptionContent(self, viewDescriptionArguments):
 		# Header
 		description = {
-			"header" : self.header.__dict__,
-			"module" : self.__module__[len("rulr.Nodes."):]
+			"header" : self.header.__dict__
 		}
 
 		# Content
-
+		description["parameters"] = self.parameters.getViewDescription(viewDescriptionArguments)
+		description["components"] = self.components.getViewDescription(viewDescriptionArguments)
 
 		# Children
-		if recursive:
+		if viewDescriptionArguments.recursive:
 			description["children"] = []
 			for child in self.children:
-				description["children"].append(child.getViewDescription(recursive))
+				description["children"].append(child.getViewDescription(viewDescriptionArguments))
 
 		return description
 

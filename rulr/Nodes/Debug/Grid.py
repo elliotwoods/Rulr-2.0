@@ -1,11 +1,15 @@
 import transforms3d
 import rulr.Nodes
+import rulr.Utils
+import rulr.Utils.Parameters
+import numpy as np
 
 class Node(rulr.Nodes.Base):
 	def __init__(self):
-		super(Node, self).__init__()
+		super().__init__()
 
-		self.addParameterBlock("Grid", {
-			'roomMinimum' : [-1, -1, 0],
-			'roomMaximum' : [1, 1, 2]
-		})
+		self.parameters.RoomBounds = rulr.Utils.AutoGroup()
+		self.parameters.RoomBounds.Minimum = rulr.Utils.Parameters.Vector(np.array([-1, -1, 0]))
+		self.parameters.RoomBounds.Maximum = rulr.Utils.Parameters.Vector(np.array([1, 1, 0]))
+
+		pass

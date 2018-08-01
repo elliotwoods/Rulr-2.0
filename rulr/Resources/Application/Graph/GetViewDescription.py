@@ -4,6 +4,7 @@ import rulr
 import rulr.Nodes.Group
 import rulr.Resources
 import rulr.Application
+import rulr.Utils
 
 class Resource(rulr.Resources.Base):
 	def defaultRequestParameters(self):
@@ -18,6 +19,8 @@ class Resource(rulr.Resources.Base):
 		nodePath = request["nodePath"]
 		node = application.getNodeByPath(nodePath)
 
+		viewDescriptionArguments = rulr.Utils.ViewDescriptionArguments(request)
+		
 		return {
-			"nodeViewDescription" : node.getViewDescription(request["recursive"])
+			"nodeViewDescription" : node.getViewDescription(viewDescriptionArguments)
 		}

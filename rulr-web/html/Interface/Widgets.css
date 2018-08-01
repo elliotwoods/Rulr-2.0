@@ -1,0 +1,67 @@
+.rulr-link-unstyle:link {
+	text-decoration: none;
+	color: black;
+}
+
+.rulr-link-unstyle:visited {
+	text-decoration: none;
+	color: black;
+}
+
+.rulr-link-unstyle:hover {
+	text-decoration: none;
+	color: black;
+}
+
+.rulr-widget {
+	padding: 3px;
+	border: none;
+}
+
+.rulr-widget-title {
+	font-style: italic;
+	border-bottom: 1px dotted grey;
+}
+
+.rulr-widget-content {
+	padding-left: 10px;
+}
+
+.rulr-widget-title-left {
+	float: left;
+}
+
+.rulr-widget-content-right {
+	float: right;
+}
+
+.rulr-widget-numeric-digit {
+	font-family: 'Courier New', Courier, monospace;
+	border: 1px solid gray;
+	margin: 3px;
+	padding: 0px;
+	text-align: center;
+	width: 20px;
+	display: inline-block;
+}
+
+.rulr-widget-numeric-digit-selected {
+	color: white;
+	background: black;
+	text-decoration: none;
+}
+.rulr-widget-numeric-digit-selected:link {
+	color: white;
+}
+.rulr-widget-numeric-digit-selected:visited {
+	color: white;
+}
+
+
+.rulr-widget-numeric-decimalpoint {
+	font-family: 'Courier New', Courier, monospace;
+	border: none;
+	margin: 3px;
+	text-align: center;
+	width: 20px;
+}

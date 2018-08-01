@@ -1,11 +1,13 @@
-import * as Utils from '../Utils.js'
+import {Viewable} from '../Utils/Viewable.js'
+import {AutoGroup} from '../Utils/AutoGroup.js'
 
-class Base {
+export class Base extends Viewable {
 	constructor() {
+		super();
+
 		this.header = {};
-		this.nodePath = [];
-		this.children = [];
-		this.moduleName = '';
+		this.parameters = new AutoGroup();
+		this.components = new AutoGroup();
 
 		this.viewportObject = new THREE.Object3D();
 	}
@@ -20,14 +22,19 @@ class Base {
 		});
 	}
 
-	getChildByID(ID) {
-		this.children.forEach((child) => {
-			if(child.header.ID == ID) {
-				return child;
-			}
-		});
+	update() {
+		this.parameters.update();
+		this.components.update();
+	}
 
-		throw(`Child #${ID} not found`);
+	async updateViewDescriptionAsync(descriptionContent) {
+		this.header = descriptionContent.header;
+		if('parameters' in descriptionContent) {
+			await this.parameters.updateViewDescriptionAsync(descriptionContent.parameters.content);
+		}
+		if('components' in descriptionContent) {
+			await this.components.updateViewDescriptionAsync(descriptionContent.components.content);
+		}
 	}
 
 	getChildByPath(nodePath) {
@@ -35,10 +42,9 @@ class Base {
 			return this;
 		}
 		else {
+			// This will throw an exception if we don't have children
 			var child = this.getChildByID(nodePath[0]);
 			return child.getChildByPath(nodePath.slice(1));
 		}
 	}
 }
-
-export { Base };

@@ -6,6 +6,7 @@ class Application {
 		this.window = new Window();
 		this.rootNode = null;
 		this.explorerNodePath = [];
+		this.selection = null;
 		this.refresh();
 	}
 
@@ -26,6 +27,9 @@ class Application {
 				// Populate the local graph
 				this.rootNode = await Utils.fromViewDescriptionAsync(response.nodeViewDescription);
 
+				// Set the selection to the first node (temporary - until we have click selection)
+				application.selection = application.rootNode.getChildByPath([0]);
+
 				// Refresh the interface
 				this.window.refresh();
 			});
@@ -39,11 +43,18 @@ class Application {
 	}
 
 	update() {
+		if(this.rootNode != null) {
+			this.rootNode.update();
+		}
 		this.window.update();
 	}
 
 	getVisibleNodes() {
 		return getVisibleNodeAndChildren(this.rootNode);
+	}
+
+	getSelection() {
+		return this.selection;
 	}
 }
 
@@ -56,9 +67,12 @@ function getVisibleNodeAndChildren(node) {
 		var visibleNodes = [];
 
 		visibleNodes.push(node);
-		node.children.forEach((child) => {
-			visibleNodes = visibleNodes.concat(getVisibleNodeAndChildren(child));
-		});
+		if('children' in node) {
+			node.children.forEach((child) => {
+				visibleNodes = visibleNodes.concat(getVisibleNodeAndChildren(child));
+			});
+		}
+		
 		return visibleNodes;
 	}
 	else {
