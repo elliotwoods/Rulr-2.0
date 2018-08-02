@@ -37,26 +37,31 @@
 
 .rulr-widget-numeric-digit {
 	font-family: 'Courier New', Courier, monospace;
-	border: 1px solid gray;
+	border: 1px solid #eee;
 	margin: 3px;
 	padding: 0px;
 	text-align: center;
-	width: 20px;
+	width: 25px;
 	display: inline-block;
+	border-radius: 10px;
+	background: #fff;
+	cursor: n-resize;
+}
+
+.rulr-widget-digit-negative {
+	background: #eee;
 }
 
 .rulr-widget-numeric-digit-selected {
-	color: white;
-	background: black;
-	text-decoration: none;
+	background: #ddd;
+
 }
 .rulr-widget-numeric-digit-selected:link {
-	color: white;
+	
 }
 .rulr-widget-numeric-digit-selected:visited {
-	color: white;
+	
 }
-
 
 .rulr-widget-numeric-decimalpoint {
 	font-family: 'Courier New', Courier, monospace;
@@ -64,4 +69,26 @@
 	margin: 3px;
 	text-align: center;
 	width: 20px;
+}
+
+.rulr-widget-numeric-sign {
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 150%;
+	margin: 3px;
+	padding: 0px;
+	text-align: center;
+	display: inline-block;
+	width: 15px;
+}
+.rulr-widget-digit-greyed {
+	background: none;
+	border: none;
+}
+
+.rulr-widget-digit-greyed:link {
+	color: #eee;
+}
+
+.rulr-widget-digit-greyed:visited {
+	color: #eee;
 }
