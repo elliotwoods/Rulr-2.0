@@ -28,3 +28,13 @@ class BoundVector(Vector):
 			"upperLimit" : self.upperLimit,
 			"step" : self.step
 		}
+
+class Matrix(rulr.Utils.Viewable):
+	def __init__(self, value):
+		super().__init__()
+		self.value = value
+		
+	def getViewDescriptionContent(self, viewDescriptionArguments):
+		return {
+			"value" : self.value.tolist()
+		}

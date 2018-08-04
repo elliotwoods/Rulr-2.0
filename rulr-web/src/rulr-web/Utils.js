@@ -66,18 +66,31 @@ export async function fromViewDescriptionAsync(description) {
 	}
 
 	var module = await import(modulePath);
-	var newNodeInstance = eval(`new module.${description.class}()`);
+	var newInstance = eval(`new module.${description.class}()`);
 
 	// Setup Viewable characteristics
 	{
-		newNodeInstance.module = description.module;
-		newNodeInstance.class = description.class;
+		newInstance.module = description.module;
+		newInstance.class = description.class;
 	}
 
-	await newNodeInstance.updateViewDescriptionAsync(description.content);
-	return newNodeInstance;
+	if(typeof newInstance.updateViewDescriptionAsync === 'function') {
+		await newInstance.updateViewDescriptionAsync(description.content);
+	}
+	else {
+		throw(`${description.module}::${description.class} does not implement updateViewDescriptionAsync`);
+	}
+
+	return newInstance;
 }
 
 export function formatNodePath(nodePath) {
 	return '/'.join(nodePath);
+}
+
+//from https://stackoverflow.com/questions/7225407/convert-camelcasetext-to-sentence-case-text/38635498
+export function camelCapsToSentanceCaps(camelCapsName) {
+	var result = camelCapsName.replace( /([A-Z])/g, " $1" );
+	var finalResult = result.charAt(0).toUpperCase() + result.slice(1); // capitalize the first letter - as an example.
+	return finalResult
 }

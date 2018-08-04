@@ -5,10 +5,19 @@
 	"content" : {
 		"children" : [
 			{
+				"moduleName" : "Item.Camera",
+				"header" : {
+					"name" : "Camera",
+					"ID" : 0
+				},
+				"content" : {
+				}
+			},
+			{
 				"moduleName" : "Debug.Grid",
 				"header" : {
 					"name" : "Grid",
-					"ID" : 0
+					"ID" : 1
 				},
 				"content" : {
 				}

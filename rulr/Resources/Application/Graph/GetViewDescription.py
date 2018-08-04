@@ -17,6 +17,11 @@ class Resource(rulr.Resources.Base):
 		application = rulr.Application.X
 
 		nodePath = request["nodePath"]
+		if isinstance(nodePath, str):
+			nodePath.split('/')
+			nodePath = [idString for idString in nodePath.split('/') if len(idString) > 0]
+			nodePath = [int(id) for id in nodePath]
+
 		node = application.getNodeByPath(nodePath)
 
 		viewDescriptionArguments = rulr.Utils.ViewDescriptionArguments(request)

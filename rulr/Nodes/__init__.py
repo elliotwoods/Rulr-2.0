@@ -8,12 +8,20 @@ class Header:
 		self.ID = 0
 		self.name = ""
 		self.visible = True
-	
+
+	def deserialize(self, description):
+		if 'ID' in description:
+			self.ID = description['ID']
+		if 'name' in description:
+			self.name = description['name']
+		if 'visible' in description:
+			self.visible = description['visible']
+
 class Base(rulr.Utils.Viewable):
 	def __init__(self):
 		self.header = Header()
 		self.header.name = self.getModuleName()
-		self.children = []
+
 		self.parameters = rulr.Utils.AutoGroup()
 		self.components = rulr.Utils.AutoGroup()
 
@@ -32,12 +40,6 @@ class Base(rulr.Utils.Viewable):
 		# Content
 		description["parameters"] = self.parameters.getViewDescription(viewDescriptionArguments)
 		description["components"] = self.components.getViewDescription(viewDescriptionArguments)
-
-		# Children
-		if viewDescriptionArguments.recursive:
-			description["children"] = []
-			for child in self.children:
-				description["children"].append(child.getViewDescription(viewDescriptionArguments))
 
 		return description
 
@@ -61,8 +63,8 @@ def fromDescription(description):
 	module = importlib.import_module('rulr.Nodes.' + description['moduleName'])
 	newNodeInstance = module.Node()
 
-	if 'id' in description:
-		newNodeInstance.header.ID = description['ID']
+	if 'header' in description:
+		newNodeInstance.header.deserialize(description['header'])
 
 	if 'name' in description:
 		newNodeInstance.name = description['name']

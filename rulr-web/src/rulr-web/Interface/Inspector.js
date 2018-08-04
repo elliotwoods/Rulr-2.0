@@ -7,10 +7,11 @@ class Inspector extends Element {
 	constructor() {
 		super();
 		this.childWidgets = [];
-		this.group = new Group(() => this.childWidgets);
+		this.groupWidget = new Group(() => this.childWidgets);
+		this.groupWidget.showDefaultTitle = false;
 		this.whenReady(() => {
 			var listDiv = $("#Inspector-list");
-			this.group.appendTo(listDiv);
+			this.groupWidget.appendTo(listDiv);
 		});
 	}
 
@@ -29,27 +30,18 @@ class Inspector extends Element {
 		else {
 			// Single node is selected
 
-			// // Components
-			// {
-			// 	var keys = Object.keys(nodeSelection.components.children);
-			// 	keys.forEach(key => {
-			// 		listDiv.append($(`<div class="card">
-			// 			<div class="card-header">${key}</div>
-			// 			<div clas="card-body">
-			// 				<h4 class="card-title">Component title</h4>
-			// 				<p class="card-text">Body of the component.</p>
-			// 			</div>
-			// 		</div>`));
-			// 	});
-			// }
-
+			nodeSelection.components.widget.caption = "Components";
+			nodeSelection.parameters.widget.caption = "Parameters";
+			
+			this.childWidgets.push(nodeSelection.components.widget);
 			this.childWidgets.push(nodeSelection.parameters.widget);
-			this.group.needsRedraw = true;
+			this.groupWidget.caption = nodeSelection.header.name
+			this.groupWidget.needsRedraw = true;
 		}
 	}
 
 	update() {
-		this.group.update();
+		this.groupWidget.update();
 	}
 }
 

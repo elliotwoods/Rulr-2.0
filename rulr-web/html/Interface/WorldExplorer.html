@@ -9,16 +9,21 @@
 
 <template id="WorldExplorer-NodeTemplate">
 	<div class="WorldExplorer-NodeItem">
-		<a href="#" class="list-group-item list-group-item-action flex-column align-items-start active">
+		<a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
 			<div class="d-flex w100 justify-content-between">
 				<h5 class="mb-1" id="name">{Node name}</h5>
-				<small id="module">{Node module}</small>
+				<small id="moduleName">{Node module}</small>
 			</div>
 			<p clas="mb-1" id="description">
 				{Description of the module}
 			</p>
 			<small id="footer">
-				{Footer for module}
+				<span id="toolBar" class="worldexplorer-node-toolbar">
+					<button type="button" class="btn btn-sm"><i class="fab fa-js"></i></button>
+					<button type="button" class="btn btn-sm"><i class="fab fa-python"></i></button>
+					<button type="button" class="btn btn-sm"><i class="fas fa-stream"></i></button>
+				</span>
+				<span id="nodePath" class="worldexplorer-node-nodepath"></span>
 			</small>
 		</a>
 	</div>

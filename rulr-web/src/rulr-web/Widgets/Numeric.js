@@ -6,24 +6,47 @@ export class Numeric extends Base {
 		this.getFunction = getFunction;
 		this.setFunction = setFunction;
 		this.needsDigitRedraw = false;
-		
+
 		this.digits = null;
 		this.textEntry = null;
 
 		this.digitDivs = new Object();
 
+		this._defaultHighDigitCount = 1;
+
 		this.decimalPlaces = 3;
+		this.highDigitCount = this._defaultHighDigitCount;
 	}
 
 	update() {
 		super.update();
 		if (this.needsDigitRedraw) {
-			this.redrawDigits();
+			//check if digit count changed
+			{
+				var value = this.getFunction();
+				if(value != value) {
+					return;
+				}
+				
+				var height = Math.log(Math.abs(value)) / Math.log(10);
+				height = Math.floor(height) + 1;
+				var desiredHeight = Math.max(height, this._defaultHighDigitCount);
+				if (this.highDigitCount != desiredHeight) {
+					this.highDigitCount = desiredHeight;
+					this.needsRedraw = true;
+				}
+				else {
+					//if not, then just redraw the digits
+					this.redrawDigits();
+				}
+			}
 		}
 	}
 
 	firstDraw() {
-		this.title.addClass('rulr-widget-title-left');
+		if (this._title != null) {
+			this._title.addClass('rulr-widget-title-left');
+		}
 		this.content.addClass('rulr-widget-content-right');
 	}
 
@@ -34,41 +57,39 @@ export class Numeric extends Base {
 		// digits
 		{
 			this.digits = $('<span></span>');
+			this.digitDivs = new Object();
 			this.content.append(this.digits);
-	
-			var highDigitCount = Math.floor(Math.log(Math.abs(value) / Math.log(10)));
-			highDigitCount = Math.max(highDigitCount, 4);
-	
+
 			{
 				let digitElement = $(`<span class="rulr-widget-numeric-sign">&nbsp;</a>`);
 				this.digits.append(digitElement);
 				this.digitDivs["sign"] = digitElement;
 			}
-	
-			for (var exp = highDigitCount; exp >= -this.decimalPlaces; exp--) {
+
+			for (var exp = this.highDigitCount; exp >= -this.decimalPlaces; exp--) {
 				let numberScale = Math.pow(10, exp);
-				
-				
+
+
 				let digitElement = $(`<a href="#" class="rulr-link-unstyle rulr-widget-numeric-digit">&nbsp;</a>`);
 				this.digits.append(digitElement);
 				this.digitDivs[exp.toString()] = digitElement;
-	
+
 				let isDragging = false;
 				let mouseY = 0;
 				let sumDelta = 0;
 				let mouseMoved = false;
-	
+
 				let mouseDownListener = (event) => {
 					// Don't perform a normal drag
 					event.preventDefault();
-	
+
 					// Add listeners to mouse actions
 					document.addEventListener("mousemove", mouseMoveListener);
 					document.addEventListener("mouseup", mouseUpListener);
-	
+
 					mouseY = event.clientY;
 					mouseMoved = false;
-	
+
 					digitElement.addClass('rulr-widget-numeric-digit-selected');
 				};
 				let mouseMoveListener = (event) => {
@@ -77,16 +98,16 @@ export class Numeric extends Base {
 					delta /= pxPerStep;
 					if (Math.abs(delta) > 1) {
 						mouseMoved = true;
-						
+
 						var digitDelta = Math.floor(Math.abs(delta)) * Math.sign(delta);
 						mouseY += digitDelta * pxPerStep;
-	
+
 						//calculate new value
 						var newValue = this.getFunction();
 						newValue -= digitDelta * numberScale;
 						newValue = round(newValue, this.decimalPlaces);
 						this.setFunction(newValue);
-	
+
 						//flag for redraw digits on next update
 						this.needsDigitRedraw = true;
 					}
@@ -94,26 +115,26 @@ export class Numeric extends Base {
 				let mouseUpListener = (event) => {
 					document.removeEventListener("mousemove", mouseMoveListener);
 					document.removeEventListener("mouseup", mouseUpListener);
-	
+
 					digitElement.removeClass('rulr-widget-numeric-digit-selected');
 
-					if(!mouseMoved) {
+					if (!mouseMoved) {
 						this.digits.hide();
 						this.textEntry.show();
 						this.textEntry.val(this.getFunction().toString());
 						this.textEntry.select();
 					}
 				};
-	
+
 				//this also attaches the other listeners
 				digitElement.mousedown(mouseDownListener);
-	
+
 				// Add the decimal point after the single digits
 				if (exp == 0) {
 					this.digits.append($(`<span class="rulr-widget-numeric-decimalpoint">&bull;</span>`));
 				}
 			}
-	
+
 			this.needsDigitRedraw = true;
 		}
 
@@ -129,7 +150,7 @@ export class Numeric extends Base {
 					var textEntryValue = parseFloat(this.textEntry.val());
 
 					// Avoid NaN
-					if(textEntryValue == textEntryValue) {
+					if (textEntryValue == textEntryValue) {
 						this.setFunction(textEntryValue);
 						this.needsDigitRedraw = true;
 					}
@@ -140,7 +161,7 @@ export class Numeric extends Base {
 
 			this.textEntry.keydown((event) => {
 				var key = event.which;
-				if(key == 13) {
+				if (key == 13) {
 					closeTextEntry();
 				}
 			})
@@ -151,31 +172,38 @@ export class Numeric extends Base {
 	redrawDigits() {
 		var keys = Object.keys(this.digitDivs);
 		var value = this.getFunction();
-		
+
 		var valueString = Math.abs(value).toFixed(this.decimalPlaces);
-		var reverseValueString= valueString.split("").reverse().join("");
+		var reverseValueString = valueString.split("").reverse().join("");
 
 		for (var key of keys) {
 			var div = this.digitDivs[key];
 
-			if(key == "sign") {
-				var positive = value >= 0;
-				div.html(positive ? "+" : "-");
+			if (key == "sign") {
+				if(value > 0) {
+					div.html('+');
+				}
+				else if(value == 0) {
+					div.html('&nbsp;');
+				}
+				else {
+					div.html('-');
+				}
 			}
 			else {
 				var exponent = Number(key);
-				
+
 				var digit = getDigitFromValueString(reverseValueString, exponent, this.decimalPlaces);
 				div.html(digit);
 
-				if(value < 0) {
+				if (value < 0) {
 					div.addClass('rulr-widget-digit-negative');
 				}
 				else {
 					div.removeClass('rulr-widget-digit-negative');
 				}
 
-				if(Math.abs(value) < Math.pow(10, exponent)) {
+				if (Math.abs(value) < Math.pow(10, exponent)) {
 					div.addClass('rulr-widget-digit-greyed');
 					div.removeClass('rulr-widget-digit-negative');
 				}
@@ -204,12 +232,12 @@ function getDigitFromValueString(reverseValueString, exponent, decimalPlaces) {
 	var charIndex = exponent + decimalPlaces;
 
 	//ignore the decimal place
-	if(charIndex >= decimalPlaces) {
+	if (charIndex >= decimalPlaces) {
 		charIndex++;
 	}
 
 	//zeros if digit is larger than value represented by string
-	if(charIndex >= reverseValueString.length) {
+	if (charIndex >= reverseValueString.length) {
 		return '0'
 	}
 	else {

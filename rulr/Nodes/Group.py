@@ -11,7 +11,7 @@ class Node(rulr.Nodes.Base):
 		else:
 			childIDS = []
 			for child in self.children:
-				childIDS.append(child.ID)
+				childIDS.append(child.header.ID)
 			return sorted(childIDS)[-1] + 1
 
 	def checkForChildIDConflicts(self):
@@ -40,3 +40,14 @@ class Node(rulr.Nodes.Base):
 		else:
 			childNode = self.getChildByID(nodePath[0])
 			return childNode.getChildByPath(nodePath[1:])
+
+	def getViewDescriptionContent(self, viewDescriptionArguments):
+		description = super().getViewDescriptionContent(viewDescriptionArguments)
+
+		# Children
+		if viewDescriptionArguments.recursive:
+			description["children"] = []
+			for child in self.children:
+				description["children"].append(child.getViewDescription(viewDescriptionArguments))
+
+		return description

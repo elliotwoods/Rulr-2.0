@@ -18,12 +18,22 @@ class WorldExplorer extends Element {
 
 			currentGroupNode.children.forEach(childNode => {
 				var newEntry = $(nodeItemTemplateHTML);
-				newEntry.find('#name').text(childNode.header.name);
-				newEntry.find('#footer').text('#' + childNode.header.ID);
-				newEntry.find('#module').text(childNode.moduleName);
-				newEntry.find('#description').text("description of node");
-
 				newEntry.appendTo(listDiv);
+
+				newEntry.find('#name').html(childNode.header.name);
+				newEntry.find('#nodePath').html('#' + childNode.header.ID);
+				newEntry.find('#moduleName').html(childNode.module);
+				newEntry.find('#description').html("description of node");
+
+				let toolBar = newEntry.find('#toolBar');
+				toolBar.hide();
+
+				newEntry.mouseenter(() => {
+					toolBar.show();
+				});
+				newEntry.mouseleave(function(event) {
+					toolBar.hide();
+				});
 			});
 		}
 	}

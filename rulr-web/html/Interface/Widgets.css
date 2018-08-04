@@ -1,3 +1,6 @@
+rulr-widgets-scrollcontainer {
+	overflow: scroll;
+}
 .rulr-link-unstyle:link {
 	text-decoration: none;
 	color: black;
@@ -91,4 +94,66 @@
 
 .rulr-widget-digit-greyed:visited {
 	color: #eee;
+}
+
+.rulr-widgets-componentcard {
+	margin-top: 10px;
+}
+
+.rulr-widgets-componentcard-toolbar {
+	float: right;
+	margin: -5px;
+}
+
+.rulr-widgets-componentcard-content {
+	padding-top: 5px;
+	padding-right: 5px;
+	padding-left: 0px;
+}
+
+.rulr-widgets-matrix-table {
+	border: none;
+}
+
+.rulr-widgets-matrix-table-row {
+	border: none;
+}
+
+.rulr-widgets-matrix-table-cell {
+	font-family: 'Courier New', Courier, monospace;
+	text-align: right;
+}
+
+.rulr-widgets-matrix-table-cellcontent {
+	font-family: 'Courier New', Courier, monospace;
+	text-align: center;
+}
+
+.rulr-widgets-matrix-table-cellcontent:link {
+	color: grey;
+}
+
+.rulr-widgets-matrix-table-cellcontent:visited {
+	color: grey;
+}
+
+.rulr-widgets-matrix-table-cellcontent:hover {
+	color: grey;
+	
+}
+
+.rulr-widgets-matrix-table-cellcontent-selected {
+	font-family: 'Courier New', Courier, monospace;
+	border: 1px solid #eee;
+	background: #eee;
+	display: inline-block;
+	border-radius: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.rulr-widget-matrix-numericeditor-dismiss {
+	float: right;
+	margin-top: 8px;
+	margin-left: 10px;
 }

@@ -1,4 +1,27 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 	<span class="navbar-brand" id="title">Inspector</span>
 </nav>
-<ul id="Inspector-list" class="list-group"></ul>
+<div class="rulr-widgets-scrollcontainer">
+	<ul id="Inspector-list" class="list-group"></ul>
+</div>
+
+<template id="Inspector-ComponentTemplate">
+	<div class="card mb-3 rulr-widgets-componentcard">
+		<div class="card-header">
+			<span id="toolBar" class="rulr-widgets-componentcard-toolbar">
+				<button type="button" class="btn btn-sm">
+					<i class="fab fa-js"></i>
+				</button>
+				<button type="button" class="btn btn-sm">
+					<i class="fab fa-python"></i>
+				</button>
+			</span>
+			<span id="inspector-card-name">{Component title}"</span>
+		</div>
+
+		<div class="card-body rulr-widgets-componentcard-content">
+			<ul class="list-group list-group-flush" id="inspector-card-content">
+			</ul>
+		</div>
+	</div>
+</template>

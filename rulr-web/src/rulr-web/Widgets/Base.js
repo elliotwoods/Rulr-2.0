@@ -1,30 +1,42 @@
 // Widgets.Base
+
+import * as Utils from '../Utils.js'
+
 export class Base {
 	constructor() {
 		this.watchViewables = [];
 		this.onEditListeners = [];
 		this.needsRedraw = true;
 		this.caption = this.constructor.name;
-		
-		this.domElement = null;
-		this.title = null;
+
 		this.content = null;
+
+		this.showDefaultTitle = true;
+
+		this._domElement = null;
+		this._title = null;
 	}
 
 	appendTo(parentDomElement) {
-		this.domElement = $('<li class="list-group-item rulr-widget"></li>');
-		this.domElement.appendTo(parentDomElement);
-
-		{
-			this.title = $(`<div class="rulr-widget-title">${this.caption}</div>`);
-			this.title.appendTo(this.domElement);
+		if(this.showDefaultTitle) {
+			this._domElement = $('<li class="list-group-item rulr-widget"></li>');
+			this._domElement.appendTo(parentDomElement);
+	
+			{
+				this._title = $(`<div class="rulr-widget-title"></div>`);
+				this._title.appendTo(this._domElement);
+			}
+	
+			{
+				this.content = $(`<div class="rulr-widget-content"></div>`);
+				this.content.appendTo(this._domElement);
+			}	
 		}
-
-		{
+		else {
 			this.content = $(`<div class="rulr-widget-content"></div>`);
-			this.content.appendTo(this.domElement);
+			this.content.appendTo(parentDomElement);
 		}
-
+		
 		this.firstDraw();
 	}
 
@@ -36,7 +48,7 @@ export class Base {
 			}
 		}
 
-		if (this.needsRedraw && this.domElement != null) {
+		if (this.needsRedraw && this.content != null) {
 			this.content.empty();
 			this.draw();
 			this.needsRedraw = false;
@@ -48,6 +60,8 @@ export class Base {
 	}
 
 	draw() {
-		this.title.html(this.caption);
+		if(this.showDefaultTitle) {
+			this._title.html(Utils.camelCapsToSentanceCaps(this.caption));
+		}
 	}
 }
