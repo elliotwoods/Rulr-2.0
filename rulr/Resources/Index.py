@@ -7,4 +7,4 @@ class Resource(rulr.Resources.Base):
 		super()
 	
 	def perform(self, request):
-		raise falcon.HTTPFound("/Client/html/index.html")
+		raise falcon.HTTPFound("/rulr-web/html/index.html")

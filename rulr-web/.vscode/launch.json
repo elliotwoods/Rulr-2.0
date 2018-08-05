@@ -8,8 +8,16 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "http://localhost:4000/Client/html/index.html",
+            "url": "http://localhost:4000/rulr-web/html/index.html",
             "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "chrome",
+            "request": "attach",
+            "address": "127.0.0.1:49152",
+            "name": "Attach to 49152",
+            "url": "http://localhost:4000/rulr-web/html/index.html",
+            "webRoot": "${workspaceFolder}/.."
         }
     ]
 }

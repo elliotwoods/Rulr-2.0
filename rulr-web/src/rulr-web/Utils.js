@@ -55,7 +55,7 @@ export async function fromViewDescriptionAsync(description) {
 
 	// For each session, ensure a hard reload
 	if(!loadedModulePaths.includes(modulePath)) {
-		var absolutePath = '/Client/src/rulr-web/' + modulePath.substring(2);
+		var absolutePath = '/rulr-web/src/rulr-web/' + modulePath.substring(2);
 		var response = await $.ajax({
 			url : absolutePath,
 			processData: false,

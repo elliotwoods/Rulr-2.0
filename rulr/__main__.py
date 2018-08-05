@@ -27,9 +27,8 @@ if __name__ == "__main__":
 	rulr.Resources.initializeResources(api)
 	
 	# Build a new api which handles static files
-	clientFilesPath = os.path.abspath('Client')
 	apiWithStatic = SharedDataMiddleware(api, {
-		'/Client' : (os.path.join(os.path.dirname(__file__), '..', 'rulr-web')),
+		'/rulr-web' : (os.path.join(os.path.dirname(__file__), '..', 'rulr-web')),
 		'/Nodes' : (os.path.join(os.path.dirname(__file__), 'Nodes'))
 	})
 
