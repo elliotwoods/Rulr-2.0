@@ -16,7 +16,7 @@ class AutoGroup(Viewable):
 			value = dictionary_of_attributes[key]
 
 			# get the view description of the child
-			get_child_description = getattr(value, 'get_child_description', None)
+			get_child_description = getattr(value, 'get_view_description', None)
 			if callable(get_child_description):
 				description[key] = get_child_description(view_description_arguments)
 

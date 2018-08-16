@@ -1,6 +1,5 @@
-import { pyCall, showException } from './Utils.js'
+import { pyCall, showException, fromViewDescriptionAsync } from './Utils.js'
 import { Window } from './Interface/Window.js'
-
 class Application {
 	constructor() {
 		this.window = new Window();
@@ -28,8 +27,8 @@ class Application {
 		// Check if the application is loaded
 		if(await pyCall(this.server.hasRootNode)) {
 			var serverNode = await pyCall(this.server.getNodeByPath, []);
-			var nodeViewDescription = await pyCall(serverNode.getViewDescription, {});
-			this.rootNode = await Utils.fromViewDescriptionAsync(nodeViewDescription);
+			var nodeViewDescription = await serverNode.getViewDescription({});
+			this.rootNode = await fromViewDescriptionAsync(nodeViewDescription);
 
 			// Set the selection to the first node (temporary - until we have click selection)
 			this.selection = this.rootNode.getChildByPath([0]);

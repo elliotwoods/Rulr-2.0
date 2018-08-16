@@ -1,4 +1,4 @@
-from rulr.Utils import export_method, export_function
+from rulr.Utils import export_method
 import rulr.Nodes
 import rulr.Utils
 import os

@@ -7,6 +7,7 @@ from cefpython3 import cefpython as cef
 import sys
 import http.server
 import threading
+from rulr.Utils._Exports import export_method, call_exported_object
 
 import rulr.Application
 
@@ -42,6 +43,11 @@ def browser_on_after_created(browser, **_):
 class ClientHandler():
 	def OnLoadingStateChange(self, browser, is_loading, **_):
 		if not is_loading:
+			bindings = cef.JavascriptBindings()
+			bindings.SetObject("serverApplication", rulr.Application.instance) # This is handled in the initialisation
+			bindings.SetFunction("callExportedObject", call_exported_object)
+			browser.SetJavascriptBindings(bindings)
+			
 			browser.ExecuteFunction("initialise")
 	
 	def OnConsoleMessage(self, browser, message, **_):
@@ -74,10 +80,6 @@ if __name__ == "__main__":
 
 	clientHandler = ClientHandler()
 	browser.SetClientHandler(clientHandler)
-
-	bindings = cef.JavascriptBindings()
-	bindings.SetObject("serverApplication", rulr.Application.instance) # This is handled in the initialisation
-	browser.SetJavascriptBindings(bindings)
 
 	cef.MessageLoop()
 	cef.Shutdown()
