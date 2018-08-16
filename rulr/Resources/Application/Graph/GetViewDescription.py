@@ -27,5 +27,5 @@ class Resource(rulr.Resources.Base):
 		viewDescriptionArguments = rulr.Utils.ViewDescriptionArguments(request)
 		
 		return {
-			"nodeViewDescription" : node.getViewDescription(viewDescriptionArguments)
+			"nodeViewDescription" : node.get_view_description(viewDescriptionArguments)
 		}

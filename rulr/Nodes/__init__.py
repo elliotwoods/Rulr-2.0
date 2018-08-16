@@ -31,15 +31,15 @@ class Base(rulr.Utils.Viewable):
 	def serialize(self):
 		pass
 
-	def getViewDescriptionContent(self, viewDescriptionArguments):
+	def get_view_description_content(self, viewDescriptionArguments):
 		# Header
 		description = {
 			"header" : self.header.__dict__
 		}
 
 		# Content
-		description["parameters"] = self.parameters.getViewDescription(viewDescriptionArguments)
-		description["components"] = self.components.getViewDescription(viewDescriptionArguments)
+		description["parameters"] = self.parameters.get_view_description(viewDescriptionArguments)
+		description["components"] = self.components.get_view_description(viewDescriptionArguments)
 
 		return description
 
@@ -59,7 +59,7 @@ class Base(rulr.Utils.Viewable):
 
 
 
-def fromDescription(description):
+def from_description(description):
 	module = importlib.import_module('rulr.Nodes.' + description['moduleName'])
 	newNodeInstance = module.Node()
 

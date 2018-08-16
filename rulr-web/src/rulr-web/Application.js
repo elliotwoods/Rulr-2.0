@@ -1,4 +1,4 @@
-import * as Utils from './Utils.js'
+import { pyCall, showException } from './Utils.js'
 import { Window } from './Interface/Window.js'
 
 class Application {
@@ -7,32 +7,35 @@ class Application {
 		this.rootNode = null;
 		this.explorerNodePath = [];
 		this.selection = null;
-		this.refresh();
+		this.server = null;
+	}
+
+	async initialise(serverApplication) {
+		try {
+			this.server = serverApplication;
+			await this.refresh();
+		}
+		catch(exception) {
+			showException(exception);
+		}
 	}
 
 	async refresh() {
-		var status = null;
-
-		// Get the application status
-		await Utils.asyncRequest("/Application/Graph/GetStatus", {}, (applicationStatus) => {
-			status = applicationStatus;
-		});
+		if(this.server == null) {
+			throw("Server application is not available");
+		}
 
 		// Check if the application is loaded
-		if(status.hasRootNode) {
-			await Utils.asyncRequest("/Application/Graph/GetViewDescription"
-			, {
-				nodePath : []
-			}, async (response) => {
-				// Populate the local graph
-				this.rootNode = await Utils.fromViewDescriptionAsync(response.nodeViewDescription);
+		if(await pyCall(this.server.hasRootNode)) {
+			var serverNode = await pyCall(this.server.getNodeByPath, []);
+			var nodeViewDescription = await pyCall(serverNode.getViewDescription, {});
+			this.rootNode = await Utils.fromViewDescriptionAsync(nodeViewDescription);
 
-				// Set the selection to the first node (temporary - until we have click selection)
-				application.selection = application.rootNode.getChildByPath([0]);
+			// Set the selection to the first node (temporary - until we have click selection)
+			this.selection = this.rootNode.getChildByPath([0]);
 
-				// Refresh the interface
-				this.window.refresh();
-			});
+			// Refresh the interface
+			this.window.refresh();
 		}
 		else {
 			// If not loaded, pop up the load project dialog

@@ -9,7 +9,7 @@ class Vector(rulr.Utils.Viewable):
 		super().__init__()
 		self.value = value
 	
-	def getViewDescriptionContent(self, viewDescriptionArguments):
+	def get_view_description_content(self, viewDescriptionArguments):
 		return {
 			"value" : self.value.tolist()
 		}
@@ -21,7 +21,7 @@ class BoundVector(Vector):
 		self.upperLimit = upperLimit
 		self.step = step
 
-	def getViewDescriptionContent(self, viewDescriptionArguments):
+	def get_view_description_content(self, viewDescriptionArguments):
 		return {
 			"value" : self.value.tolist(),
 			"lowerLimit" : self.lowerLimit,
@@ -34,7 +34,7 @@ class Matrix(rulr.Utils.Viewable):
 		super().__init__()
 		self.value = value
 		
-	def getViewDescriptionContent(self, viewDescriptionArguments):
+	def get_view_description_content(self, viewDescriptionArguments):
 		return {
 			"value" : self.value.tolist()
 		}

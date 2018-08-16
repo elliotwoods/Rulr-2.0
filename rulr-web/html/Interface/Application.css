@@ -5,3 +5,8 @@
 body {
 	overflow: hidden;
 }
+
+#alerts {
+	position: fixed;
+	top: 0px;
+}

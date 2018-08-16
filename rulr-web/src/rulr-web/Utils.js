@@ -1,3 +1,62 @@
+export async function pyCall(action, ...args) {
+	return new Promise((resolve, reject) => {
+		var successCallback = (returnValue) => {
+			resolve(returnValue);
+		};
+		var exceptionCallback = (exception) => {
+			console.log("Exception hit")
+			reject(exception);
+		};
+		action(successCallback, exceptionCallback, ...args);
+	});
+}
+
+export function showException(exception) {
+	var alert;
+
+	if (typeof (exception) === 'object') {
+		alert = $(`
+		<div class="alert alert-success alert-dismissible fade show" role="alert">
+			<h4 class="alert-heading">${exception.message} [${exception.type}]</h4>
+			<ul></ul>
+			<hr>
+			<h5>Traceback:</h5>
+			<ol></ol>
+		
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+			`);
+
+		for (var arg in exception.args) {
+			alert.find('ul').append(`<li>${arg}</li>`);
+		}
+
+		for (var tracebackEntry in exception.traceback) {
+			alert.find('ol').append(`
+		<li>
+			<strong>${tracebackEntry.filename}:${tracebackEntry.lineNumber}</strong> <br />
+			${tracebackEntry.line}
+		</li>
+				`);
+		}
+	}
+	else if (typeof(exception) === 'string') {
+		alert = $(`
+		<div class="alert alert-success alert-dismissible fade show" role="alert">
+			<h4 class="alert-heading">${exception}</h4>
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+			`);
+	}
+
+
+	$("#alerts").append(alert);
+}
+
 export function request(url, requestData, responseFunction, errorFunction = (error) => { }) {
 	$.ajax({
 		url: url,
@@ -26,7 +85,7 @@ export async function asyncForEach(array, action) {
 export async function asyncRequest(url, requestData = null, responseFunction = null, errorFunction = (error) => { }) {
 	return new Promise((resolve) => {
 		request(url, requestData, (response) => {
-			if(responseFunction instanceof Function) {
+			if (responseFunction instanceof Function) {
 				responseFunction(response);
 			}
 			resolve();
@@ -54,12 +113,12 @@ export async function fromViewDescriptionAsync(description) {
 	var modulePath = './' + description.module.split('.').join('/') + '.js';
 
 	// For each session, ensure a hard reload
-	if(!loadedModulePaths.includes(modulePath)) {
+	if (!loadedModulePaths.includes(modulePath)) {
 		var absolutePath = '/rulr-web/src/rulr-web/' + modulePath.substring(2);
 		var response = await $.ajax({
-			url : absolutePath,
+			url: absolutePath,
 			processData: false,
-			cache : false,
+			cache: false,
 			dataType: 'text'
 		});
 		loadedModulePaths.push(modulePath);
@@ -74,11 +133,11 @@ export async function fromViewDescriptionAsync(description) {
 		newInstance.class = description.class;
 	}
 
-	if(typeof newInstance.updateViewDescriptionAsync === 'function') {
+	if (typeof newInstance.updateViewDescriptionAsync === 'function') {
 		await newInstance.updateViewDescriptionAsync(description.content);
 	}
 	else {
-		throw(`${description.module}::${description.class} does not implement updateViewDescriptionAsync`);
+		throw (`${description.module}::${description.class} does not implement updateViewDescriptionAsync`);
 	}
 
 	return newInstance;
@@ -90,7 +149,7 @@ export function formatNodePath(nodePath) {
 
 //from https://stackoverflow.com/questions/7225407/convert-camelcasetext-to-sentence-case-text/38635498
 export function camelCapsToSentanceCaps(camelCapsName) {
-	var result = camelCapsName.replace( /([A-Z])/g, " $1" );
+	var result = camelCapsName.replace(/([A-Z])/g, " $1");
 	var finalResult = result.charAt(0).toUpperCase() + result.slice(1); // capitalize the first letter - as an example.
 	return finalResult
 }

@@ -1,3 +1,9 @@
-import { application } from './rulr-web/Application.js'
+var hasInitialised = false;
 
-application;
+async function initialise() {
+	if(!hasInitialised) {
+		var applicationModule = await import('./rulr-web/Application.js');
+		await applicationModule.application.initialise(serverApplication);
+		hasInitialised = true;
+	}
+}

@@ -5,9 +5,9 @@ class Base(rulr.Utils.Viewable):
 		self.parameters = rulr.Utils.AutoGroup()
 		pass
 
-	def getViewDescriptionContent(self, viewDescriptionArguments):
+	def get_view_description_content(self, viewDescriptionArguments):
 		description = {}
-		description["parameters"] = self.parameters.getViewDescription(viewDescriptionArguments)
+		description["parameters"] = self.parameters.get_view_description(viewDescriptionArguments)
 		return description
 
 class ComponentGroup(object):
