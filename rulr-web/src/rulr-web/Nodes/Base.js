@@ -1,44 +1,48 @@
-import {Viewable} from '../Utils/Viewable.js'
-import {AutoGroup} from '../Utils/AutoGroup.js'
+import { Viewable } from '../Utils/Viewable.js'
+import { AutoGroup } from '../Utils/AutoGroup.js'
+
+export class Header extends Viewable {
+	constructor() {
+		super();
+		this.description = {};
+	}
+
+	async refresh() {
+		await super.refresh();
+		this.description = await this.serverInstance.getDescription();
+	}
+};
 
 export class Base extends Viewable {
 	constructor() {
 		super();
 
-		this.header = {};
+		this.header = new Header();
 		this.parameters = new AutoGroup();
 		this.components = new AutoGroup();
 
+		// Every node has a base viewportObject. To draw to the 3D viewport, add children to this viewportObject
 		this.viewportObject = new THREE.Object3D();
 	}
 
-	refresh() {
-		Utils.request("/Application/Graph/GetViewDescription"
-		,{
-			"nodePath" : this.nodePath
-		}
-		, response => {
-			this.header = response.nodeViewDescription.header;
-		});
+	async update() {
+		await super.update();
+
+		await this.header.update();
+		await this.parameters.update();
+		await this.components.update();
 	}
 
-	update() {
-		this.parameters.update();
-		this.components.update();
-	}
+	async refresh() {
+		await super.refresh();
 
-	async updateViewDescriptionAsync(descriptionContent) {
-		this.header = descriptionContent.header;
-		if('parameters' in descriptionContent) {
-			await this.parameters.updateViewDescriptionAsync(descriptionContent.parameters.content);
-		}
-		if('components' in descriptionContent) {
-			await this.components.updateViewDescriptionAsync(descriptionContent.components.content);
-		}
+		this.header.serverInstance = await this.serverInstance.getHeader();
+		this.parameters.serverInstance = await this.serverInstance.getParameters();
+		this.components.serverInstance = await this.serverInstance.getComponents();
 	}
 
 	getChildByPath(nodePath) {
-		if(nodePath.length == 0) {
+		if (nodePath.length == 0) {
 			return this;
 		}
 		else {

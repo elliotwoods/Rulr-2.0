@@ -50,8 +50,8 @@ class ClientHandler():
 			
 			browser.ExecuteFunction("initialise")
 	
-	def OnConsoleMessage(self, browser, message, **_):
-		print ("JS Console Message : {0}".format(message))
+	#def OnConsoleMessage(self, browser, message, **_):
+	#	print ("JS Console Message : {0}".format(message))
 
 if __name__ == "__main__":
 	# start_falcon()

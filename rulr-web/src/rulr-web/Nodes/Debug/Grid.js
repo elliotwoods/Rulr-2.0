@@ -11,8 +11,8 @@ class Node extends Base {
 		this.viewportObject.add(this.axes);
 	}
 
-	update() {
-		super.update();		
+	async update() {
+		await super.update();		
 	}
 }
 

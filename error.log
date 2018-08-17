@@ -80,3 +80,51 @@ KeyError: 15872
     del THREADS[cur_thread.id]
 KeyError: 5028
 
+
+[2018-08-17 13:09:12] Traceback (most recent call last):
+  File "c:\Users\kimchips\.vscode\extensions\ms-python.python-2018.7.1\pythonFiles\PythonTools\visualstudio_py_launcher.py", line 91, in <module>
+    vspd.debug(filename, port_num, debug_id, debug_options, currentPid, run_as)
+  File "c:\Users\kimchips\.vscode\extensions\ms-python.python-2018.7.1\pythonFiles\PythonTools\visualstudio_py_debugger.py", line 2629, in debug
+    del THREADS[cur_thread.id]
+KeyError: 19616
+
+
+[2018-08-17 17:41:03] Traceback (most recent call last):
+  File "c:\Users\kimchips\.vscode\extensions\ms-python.python-2018.7.1\pythonFiles\PythonTools\visualstudio_py_launcher.py", line 91, in <module>
+    vspd.debug(filename, port_num, debug_id, debug_options, currentPid, run_as)
+  File "c:\Users\kimchips\.vscode\extensions\ms-python.python-2018.7.1\pythonFiles\PythonTools\visualstudio_py_debugger.py", line 2621, in debug
+    exec_module(file, globals_obj)
+  File "c:\Users\kimchips\.vscode\extensions\ms-python.python-2018.7.1\pythonFiles\PythonTools\visualstudio_py_util.py", line 127, in exec_module
+    runpy.run_module(module, global_variables, run_name=global_variables.get('__name__'), alter_sys=True)
+  File "C:\Users\kimchips\Anaconda3\envs\Rulr\lib\runpy.py", line 205, in run_module
+    return _run_module_code(code, init_globals, run_name, mod_spec)
+  File "C:\Users\kimchips\Anaconda3\envs\Rulr\lib\runpy.py", line 96, in _run_module_code
+    mod_name, mod_spec, pkg_name, script_name)
+  File "C:\Users\kimchips\Anaconda3\envs\Rulr\lib\runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "C:\Users\kimchips\Dropbox (Kimchi and Chips)\Rulr 2.0\Rulr\rulr\__main__.py", line 71, in <module>
+    "v8-cache-option" : "off"
+  File "cefpython_py36.pyx", line 627, in cefpython_py36.Initialize
+  File "settings.pyx", line 133, in cefpython_py36.SetApplicationSettings
+Exception: Invalid appSettings key: v8-cache-option
+
+
+[2018-08-17 17:41:26] Traceback (most recent call last):
+  File "c:\Users\kimchips\.vscode\extensions\ms-python.python-2018.7.1\pythonFiles\PythonTools\visualstudio_py_launcher.py", line 91, in <module>
+    vspd.debug(filename, port_num, debug_id, debug_options, currentPid, run_as)
+  File "c:\Users\kimchips\.vscode\extensions\ms-python.python-2018.7.1\pythonFiles\PythonTools\visualstudio_py_debugger.py", line 2621, in debug
+    exec_module(file, globals_obj)
+  File "c:\Users\kimchips\.vscode\extensions\ms-python.python-2018.7.1\pythonFiles\PythonTools\visualstudio_py_util.py", line 127, in exec_module
+    runpy.run_module(module, global_variables, run_name=global_variables.get('__name__'), alter_sys=True)
+  File "C:\Users\kimchips\Anaconda3\envs\Rulr\lib\runpy.py", line 205, in run_module
+    return _run_module_code(code, init_globals, run_name, mod_spec)
+  File "C:\Users\kimchips\Anaconda3\envs\Rulr\lib\runpy.py", line 96, in _run_module_code
+    mod_name, mod_spec, pkg_name, script_name)
+  File "C:\Users\kimchips\Anaconda3\envs\Rulr\lib\runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "C:\Users\kimchips\Dropbox (Kimchi and Chips)\Rulr 2.0\Rulr\rulr\__main__.py", line 71, in <module>
+    "v8-cache-option" : "off"
+  File "cefpython_py36.pyx", line 627, in cefpython_py36.Initialize
+  File "settings.pyx", line 133, in cefpython_py36.SetApplicationSettings
+Exception: Invalid appSettings key: v8-cache-option
+

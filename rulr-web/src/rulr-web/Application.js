@@ -1,4 +1,5 @@
-import { pyCall, showException, fromViewDescriptionAsync } from './Utils.js'
+import { showException, fromViewDescriptionAsync, fromServerInstance } from './Utils.js'
+import { pyCall } from './Imports.js'
 import { Window } from './Interface/Window.js'
 class Application {
 	constructor() {
@@ -6,29 +7,34 @@ class Application {
 		this.rootNode = null;
 		this.explorerNodePath = [];
 		this.selection = null;
-		this.server = null;
+		this.serverInstance = null;
 	}
 
 	async initialise(serverApplication) {
 		try {
-			this.server = serverApplication;
+			this.serverInstance = serverApplication;
 			await this.refresh();
 		}
 		catch(exception) {
 			showException(exception);
 		}
+
+		// start the regular update
+		regularUpdate();
 	}
 
 	async refresh() {
-		if(this.server == null) {
+		if(this.serverInstance == null) {
 			throw("Server application is not available");
 		}
 
 		// Check if the application is loaded
-		if(await pyCall(this.server.hasRootNode)) {
-			var serverNode = await pyCall(this.server.getNodeByPath, []);
-			var nodeViewDescription = await serverNode.getViewDescription({});
-			this.rootNode = await fromViewDescriptionAsync(nodeViewDescription);
+		if(await pyCall(this.serverInstance.hasRootNode)) {
+			var nodeServerInstance = await pyCall(this.serverInstance.getNodeByPath, []);
+			this.rootNode = await fromServerInstance(nodeServerInstance);
+
+			// We must update before setting the selection (otherwise it won't be populated)
+			await this.rootNode.update();
 
 			// Set the selection to the first node (temporary - until we have click selection)
 			this.selection = this.rootNode.getChildByPath([0]);
@@ -46,7 +52,7 @@ class Application {
 
 	update() {
 		if(this.rootNode != null) {
-			this.rootNode.update();
+			//this.rootNode.update();
 		}
 		this.window.update();
 	}
@@ -65,7 +71,7 @@ function getVisibleNodeAndChildren(node) {
 		return [];
 	}
 
-	if(node != null && node.header.visible) {
+	if(node != null && node.header.description.visible) {
 		var visibleNodes = [];
 
 		visibleNodes.push(node);
@@ -84,13 +90,9 @@ function getVisibleNodeAndChildren(node) {
 
 var application = new Application();
 
-function update() {
-	requestAnimationFrame(update);
+function regularUpdate() {
+	requestAnimationFrame(regularUpdate);
 	application.update();
 }
-
-$(document).ready(() => {
-	update();
-});
 
 export { application };

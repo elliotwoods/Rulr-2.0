@@ -20,8 +20,8 @@ class WorldExplorer extends Element {
 				var newEntry = $(nodeItemTemplateHTML);
 				newEntry.appendTo(listDiv);
 
-				newEntry.find('#name').html(childNode.header.name);
-				newEntry.find('#nodePath').html('#' + childNode.header.ID);
+				newEntry.find('#name').html(childNode.header.description.name);
+				newEntry.find('#nodePath').html('#' + childNode.header.description.ID);
 				newEntry.find('#moduleName').html(childNode.module);
 				newEntry.find('#description').html("description of node");
 

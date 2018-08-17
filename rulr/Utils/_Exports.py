@@ -30,13 +30,22 @@ def format_exception(exception):
 def export_object(instance):
 	# object is callable, needs wrapping
 
-	# Get callable methods
-	attributes = dir(instance)
-	#method_names = [att for att in attributes if callable(getattr(result, att))]
-	method_names = [att for att in attributes if hasattr(getattr(instance, att), "exported_method")]
+	object_id = None
 
-	object_id = len(exported_objects)
-	exported_objects[object_id] = weakref.ref(instance)
+	# Check if we have an existing wrapping for this object
+	for key, value in exported_objects.items():
+		if value is instance:
+			object_id = key
+
+	# If no existing wrapping, create one
+	if object_id is None:
+		object_id = len(exported_objects)
+		exported_objects[object_id] = weakref.ref(instance)
+
+	# Get callable methods (when we use export_method, we tag an attribute onto those methods - look for this)
+	attributes = dir(instance)
+	method_names = [att for att in attributes if hasattr(getattr(instance, att), "exported_method")]
+	#TODO : just export everything automatically
 
 	return {
 		"object_id" : object_id,
@@ -51,7 +60,7 @@ def export_method(method):
 		global exported_objects
 		try:
 			result = method(self, *args)
-			basic_types = [int, float, dict, str, bool]
+			basic_types = [int, float, dict, list, str, bool]
 			if type(result) in basic_types or result is None:
 				# return the value directly
 				successCallback.Call(result)

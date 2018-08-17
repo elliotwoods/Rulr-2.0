@@ -9,4 +9,6 @@ body {
 #alerts {
 	position: fixed;
 	top: 0px;
+	margin-left: -25%;
+	left: 50%;
 }

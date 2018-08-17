@@ -1,4 +1,5 @@
-import { pyCall, showException } from '../Utils.js'
+import { pyCall } from '../Imports.js'
+import { showException } from '../Utils.js'
 import { application } from '../Application.js'
 import { Element } from './Element.js'
 
@@ -13,7 +14,7 @@ class LoadProjectDialog extends Element {
 	}
 
 	async refresh(folderPath) {
-		var projectList = await pyCall(application.server.listProjects, folderPath);
+		var projectList = await pyCall(application.serverInstance.listProjects, folderPath);
 		
 		// breadcrumbs
 		{
@@ -101,7 +102,7 @@ class LoadProjectDialog extends Element {
 
 	async loadProject(projectFolderPath) {
 		try {
-			await pyCall(application.server.loadProject, projectFolderPath);
+			await pyCall(application.serverInstance.loadProject, projectFolderPath);
 			$('#loadModal').modal('hide');
 			await application.refresh();
 		}

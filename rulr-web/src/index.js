@@ -1,12 +1,18 @@
 var hasInitialised = false;
 
 async function initialise() {
-	if(!hasInitialised) {
-		var applicationModule = await import('./rulr-web/Application.js');
-		await applicationModule.application.initialise(serverApplication);
+	//always do this
+	{
+		let module = await import('./rulr-web/Imports.js');
+		module.setCallExportedObject(callExportedObject);
+	}
 
-		var utilsModule = await import('./rulr-web/Utils.js');
-		utilsModule.setCallExportedObject(callExportedObject);
+	if(!hasInitialised) {
+		{
+			let module = await import('./rulr-web/Application.js');
+			await module.application.initialise(serverApplication);
+		}
+
 		hasInitialised = true;
 	}
 }

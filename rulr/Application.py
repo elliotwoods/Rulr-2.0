@@ -11,7 +11,7 @@ class Application(object):
 	def __init__(self):
 		self.rootNode = None
 
-	def load(self, projectFolderPath):
+	def load_project(self, projectFolderPath):
 		absoluteProjectPath = os.path.normpath(os.path.join(SAVE_FOLDER, projectFolderPath))
 		print("Loading patch from {0}".format(absoluteProjectPath))
 
@@ -19,20 +19,20 @@ class Application(object):
 			description = json.loads(jsonFile.read())
 			self.rootNode = rulr.Nodes.from_description(description)
 
-	@export_method
-	def getNodeByPath(self, nodePath):
+	loadProject = export_method(load_project)
+
+	def get_node_by_path(self, nodePath):
 		if self.rootNode is None:
 			nodePathString = rulr.Utils.nodePathToString(nodePath)
 			raise Exception("Cannot get node with path {0}. Application has no root node.".format(nodePathString))
-		return self.rootNode.getChildByPath(nodePath)
+		return self.rootNode.get_child_by_path(nodePath)
+	getNodeByPath = export_method(get_node_by_path)
 
 	def has_root_node(self):
 		return self.rootNode is not None
-
 	hasRootNode = export_method(has_root_node)
 
-	@export_method
-	def listProjects(self, folderPath):
+	def list_projects(self, folderPath):
 		selectedPath = str.replace(folderPath, "\\", "/")
 		
 		if len(selectedPath) > 0:
@@ -65,9 +65,6 @@ class Application(object):
 					result["subFolders"].append(folderEntryDescription)
 
 		return result
-
-	@export_method
-	def loadProject(self, projectFolderPath):
-		self.load(projectFolderPath)
+	listProjects = export_method(list_projects)
 
 instance = Application()

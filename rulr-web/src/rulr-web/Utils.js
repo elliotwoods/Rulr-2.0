@@ -1,38 +1,29 @@
-export var callExportedObject = null;
-
-export async function pyCall(action, ...args) {
-	return new Promise((resolve, reject) => {
-		var successCallback = (returnValue) => {
-			resolve(returnValue);
-		};
-		var successObjectCallback = (returnObjectDescription) => {
-			let result = new Object();
-			result.objectID = returnObjectDescription.object_id;
-			for(var methodName of  returnObjectDescription.method_names) {
-				result[methodName] = async (...args2) => {
-					return await pyCall(callExportedObject, result.objectID, methodName, ...args2);
-				};
-			}
-			resolve(result);
-		};
-		var exceptionCallback = (exception) => {
-			console.log("Exception hit")
-			reject(exception);
-		};
-		action(successCallback, successObjectCallback, exceptionCallback, ...args);
-	});
-}
-
-export function setCallExportedObject(action) {
-	callExportedObject = action;
-}
-
 export function showException(exception) {
 	var alert;
 
-	if (typeof (exception) === 'object') {
+	if(exception instanceof Error) {
 		alert = $(`
-		<div class="alert alert-success alert-dismissible fade show" role="alert">
+		<div class="alert alert-warning alert-dismissible fade show" role="alert">
+			<h4 class="alert-heading">${exception.message} [${exception.name}]</h4>
+			<hr>
+			<strong></strong>
+			<h5>Traceback:</h5>
+			${exception.stack.replace(/\n/g, "<br />")}
+		
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+			`);
+
+		// Firefox only?so cutt
+		if(typeof exception.fileName !== 'undefined') {
+			alert.find('strong').append(`${exception.fileName}:${exception.lineNumber}x${exception.columnNumber}`);
+		}
+	}
+	else if (typeof (exception) === 'object') {
+		alert = $(`
+		<div class="alert alert-warning alert-dismissible fade show" role="alert">
 			<h4 class="alert-heading">${exception.message} [${exception.type}]</h4>
 			<ul></ul>
 			<hr>
@@ -60,7 +51,7 @@ export function showException(exception) {
 	}
 	else if (typeof(exception) === 'string') {
 		alert = $(`
-		<div class="alert alert-success alert-dismissible fade show" role="alert">
+		<div class="alert alert-warning alert-dismissible fade show" role="alert">
 			<h4 class="alert-heading">${exception}</h4>
 			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 				<span aria-hidden="true">&times;</span>
@@ -125,9 +116,7 @@ export var sessionID = guid();
 
 var loadedModulePaths = [];
 
-export async function fromViewDescriptionAsync(description) {
-	var modulePath = './' + description.module.split('.').join('/') + '.js';
-
+async function ensureFreshModule(modulePath) {
 	// For each session, ensure a hard reload
 	if (!loadedModulePaths.includes(modulePath)) {
 		var absolutePath = '/rulr-web/src/rulr-web/' + modulePath.substring(2);
@@ -139,23 +128,42 @@ export async function fromViewDescriptionAsync(description) {
 		});
 		loadedModulePaths.push(modulePath);
 	}
+}
+
+export async function fromCreationDescriptionAsync(creationDescription) {
+	var modulePath = './' + creationDescription.module.split('.').join('/') + '.js';
+
+	await ensureFreshModule(modulePath);
 
 	var module = await import(modulePath);
-	var newInstance = eval(`new module.${description.class}()`);
+	var newInstance = eval(`new module.${creationDescription.class}()`);
 
 	// Setup Viewable characteristics
 	{
-		newInstance.module = description.module;
-		newInstance.class = description.class;
+		newInstance.module = creationDescription.module;
+		newInstance.class = creationDescription.class;
 	}
+
+	return newInstance;
+}
+
+export async function fromViewDescriptionAsync(description) {
+	var newInstance = await fromCreationDescriptionAsync(description);
 
 	if (typeof newInstance.updateViewDescriptionAsync === 'function') {
 		await newInstance.updateViewDescriptionAsync(description.content);
 	}
 	else {
-		throw (`${description.module}::${description.class} does not implement updateViewDescriptionAsync`);
+		throw new Error(`${description.module}::${description.class} does not implement updateViewDescriptionAsync`);
 	}
 
+	return newInstance;
+}
+
+export async function fromServerInstance(serverInstance) {
+	var creationDescription = await serverInstance.getCreationDescription();
+	var newInstance = await fromCreationDescriptionAsync(creationDescription);
+	newInstance.serverInstance = serverInstance;
 	return newInstance;
 }
 

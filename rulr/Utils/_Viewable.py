@@ -14,14 +14,18 @@ class Viewable(ABC):
 		return {}
 
 	def get_view_description(self, view_description_arguments):
-
 		if(not isinstance(view_description_arguments, ViewDescriptionArguments)):
 			view_description_arguments = ViewDescriptionArguments(view_description_arguments)
 
+		description = self.get_creation_description()
+		description["content"] = self.get_view_description_content(view_description_arguments)
+		return description
+	getViewDescription = export_method(get_view_description)
+
+	def get_creation_description(self):
 		return {
 			"module" : self.__module__[len("rulr."):],
-			"class" : self.__class__.__name__,
-			"content" : self.get_view_description_content(view_description_arguments)
+			"class" : self.__class__.__name__
 		}
+	getCreationDescription = export_method(get_creation_description)
 
-	getViewDescription = export_method(get_view_description)
