@@ -4,7 +4,7 @@ export function showException(exception) {
 	if(exception instanceof Error) {
 		alert = $(`
 		<div class="alert alert-warning alert-dismissible fade show" role="alert">
-			<h4 class="alert-heading">${exception.message} [${exception.name}]</h4>
+			<h4 class="alert-heading"><i class="fab fa-js-square"></i> ${exception.message} [${exception.name}]</h4>
 			<hr>
 			<strong></strong>
 			<h5>Traceback:</h5>
@@ -23,8 +23,8 @@ export function showException(exception) {
 	}
 	else if (typeof (exception) === 'object') {
 		alert = $(`
-		<div class="alert alert-warning alert-dismissible fade show" role="alert">
-			<h4 class="alert-heading">${exception.message} [${exception.type}]</h4>
+		<div class="alert alert-danger alert-dismissible fade show" role="alert">
+			<h4 class="alert-heading"><i class="fab fa-python"></i> ${exception.message} [${exception.type}]</h4>
 			<ul></ul>
 			<hr>
 			<h5>Traceback:</h5>
@@ -110,48 +110,6 @@ export function guid() {
 			.substring(1);
 	}
 	return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-}
-
-export var sessionID = guid();
-
-var loadedModulePaths = [];
-
-async function ensureFreshModule(modulePath) {
-	// For each session, ensure a hard reload
-	if (!loadedModulePaths.includes(modulePath)) {
-		var absolutePath = '/rulr-web/src/rulr-web/' + modulePath.substring(2);
-		var response = await $.ajax({
-			url: absolutePath,
-			processData: false,
-			cache: false,
-			dataType: 'text'
-		});
-		loadedModulePaths.push(modulePath);
-	}
-}
-
-export async function fromCreationDescriptionAsync(creationDescription) {
-	var modulePath = './' + creationDescription.module.split('.').join('/') + '.js';
-
-	await ensureFreshModule(modulePath);
-
-	var module = await import(modulePath);
-	var newInstance = eval(`new module.${creationDescription.class}()`);
-
-	// Setup Viewable characteristics
-	{
-		newInstance.module = creationDescription.module;
-		newInstance.class = creationDescription.class;
-	}
-
-	return newInstance;
-}
-
-export async function fromServerInstance(serverInstance) {
-	var creationDescription = serverInstance.creationDescription;
-	var newInstance = await fromCreationDescriptionAsync(creationDescription);
-	newInstance.serverInstance = serverInstance;
-	return newInstance;
 }
 
 export function formatNodePath(nodePath) {

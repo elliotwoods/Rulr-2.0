@@ -8,11 +8,12 @@ export class Base extends Viewable {
 	constructor() {
 		super();
 		this.value = null;
+		this.onChangeListeners = [];
 		this.needsPullValue = true; // TODO : Currently this only ever happens once
 		this.needsPushValue = false;
 	}
 
-	async update() {
+	async updateData() {
 		if(this.needsPullValue) {
 			this.value = await this.serverInstance.value_get();
 			this.needsPullValue = false;
@@ -24,7 +25,28 @@ export class Base extends Viewable {
 			this.needsPushValue = false;
 		}
 
-		await super.update();
+		await super.updateData();
+	}
+
+	onChange() {
+		for(let listener of this.onChangeListeners) {
+			listener();
+		}
+		this.needsPushValue = true;
+	}
+}
+
+export class Float extends Base {
+	constructor() {
+		super();
+		this.value = 0.0;
+
+		this.widget = new Numeric(() => {
+			return this.value;
+		}, (value) => {
+			this.value = value;
+			this.onChange();	
+		});
 	}
 }
 
@@ -49,7 +71,7 @@ export class Vector extends Base {
 				return this.value[index];
 			}, (value) => {
 				this.value[index] = value
-				this.needsPushValue = true;
+				this.onChange();	
 			});
 			childWidget.caption = i.toString();
 			childWidget.needsRedraw = true;
@@ -82,6 +104,7 @@ export class Matrix extends Base {
 			return this.value;
 		}, (newValue) => {
 			this.value = newValue;
+			this.onChange();
 		});
 	}
 }

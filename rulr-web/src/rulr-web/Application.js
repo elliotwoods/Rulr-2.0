@@ -1,4 +1,5 @@
-import { showException, fromServerInstance } from './Utils.js'
+import { showException } from './Utils.js'
+import { fromServerInstance } from './Imports.js'
 import { pyCall } from './Imports.js'
 import { Window } from './Interface/Window.js'
 class Application {
@@ -15,7 +16,7 @@ class Application {
 			this.serverInstance = serverApplication;
 			await this.refresh();
 		}
-		catch(exception) {
+		catch (exception) {
 			showException(exception);
 		}
 
@@ -24,17 +25,17 @@ class Application {
 	}
 
 	async refresh() {
-		if(this.serverInstance == null) {
-			throw("Server application is not available");
+		if (this.serverInstance == null) {
+			throw ("Server application is not available");
 		}
 
 		// Check if the application is loaded
-		if(await pyCall(this.serverInstance.hasRootNode)) {
+		if (await pyCall(this.serverInstance.hasRootNode)) {
 			var nodeServerInstance = await pyCall(this.serverInstance.getNodeByPath, []);
 			this.rootNode = await fromServerInstance(nodeServerInstance);
 
 			// We must update before setting the selection (otherwise it won't be populated)
-			await this.rootNode.update();
+			await this.rootNode.updateData();
 
 			// Set the selection to the first node (temporary - until we have click selection)
 			this.selection = this.rootNode.getChildByPath([0]);
@@ -50,9 +51,10 @@ class Application {
 		}
 	}
 
-	update() {
-		if(this.rootNode != null) {
-			this.rootNode.update();
+	async update() {
+		if (this.rootNode != null) {
+			await this.rootNode.updateData();
+			await this.rootNode.updateView();
 		}
 		this.window.update();
 	}
@@ -67,20 +69,20 @@ class Application {
 }
 
 function getVisibleNodeAndChildren(node) {
-	if(node == null) {
+	if (node == null) {
 		return [];
 	}
 
-	if(node != null && node.header.description.visible) {
+	if (node != null && node.header.description.visible) {
 		var visibleNodes = [];
 
 		visibleNodes.push(node);
-		if('children' in node) {
+		if ('children' in node) {
 			node.children.forEach((child) => {
 				visibleNodes = visibleNodes.concat(getVisibleNodeAndChildren(child));
 			});
 		}
-		
+
 		return visibleNodes;
 	}
 	else {

@@ -128,3 +128,11 @@ Exception: Invalid appSettings key: v8-cache-option
   File "settings.pyx", line 133, in cefpython_py36.SetApplicationSettings
 Exception: Invalid appSettings key: v8-cache-option
 
+
+[2018-08-18 14:29:01] Traceback (most recent call last):
+  File "c:\Users\kimchips\.vscode\extensions\ms-python.python-2018.7.1\pythonFiles\PythonTools\visualstudio_py_launcher.py", line 91, in <module>
+    vspd.debug(filename, port_num, debug_id, debug_options, currentPid, run_as)
+  File "c:\Users\kimchips\.vscode\extensions\ms-python.python-2018.7.1\pythonFiles\PythonTools\visualstudio_py_debugger.py", line 2629, in debug
+    del THREADS[cur_thread.id]
+KeyError: 21884
+

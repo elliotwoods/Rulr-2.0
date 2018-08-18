@@ -14,7 +14,7 @@
 				}
 			},
 			{
-				"moduleName" : "Debug.Grid",
+				"moduleName" : "Helpers.Grid",
 				"header" : {
 					"name" : "Grid",
 					"ID" : 1

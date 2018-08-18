@@ -1,3 +1,5 @@
+import { guid } from './Utils.js'
+
 export var callExportedObjectMethod = null;
 export var callExportedObjectPropertyGet = null;
 export var callExportedObjectPropertySet = null;
@@ -47,4 +49,45 @@ export function setCallExportedObjectPropertyGet(action) {
 
 export function setCallExportedObjectPropertySet(action) {
 	callExportedObjectPropertySet = action;
+}
+
+export var sessionID = guid();
+var loadedModulePaths = [];
+
+async function ensureFreshModule(modulePath) {
+	// For each session, ensure a hard reload
+	if (!loadedModulePaths.includes(modulePath)) {
+		var absolutePath = '/rulr-web/src/rulr-web/' + modulePath.substring(2);
+		var response = await $.ajax({
+			url: absolutePath,
+			processData: false,
+			cache: false,
+			dataType: 'text'
+		});
+		loadedModulePaths.push(modulePath);
+	}
+}
+
+async function fromCreationDescriptionAsync(creationDescription) {
+	var modulePath = './' + creationDescription.module.split('.').join('/') + '.js';
+
+	await ensureFreshModule(modulePath);
+
+	var module = await import(modulePath);
+	var newInstance = eval(`new module.${creationDescription.class}()`);
+
+	// Setup Viewable characteristics
+	{
+		newInstance.module = creationDescription.module;
+		newInstance.class = creationDescription.class;
+	}
+
+	return newInstance;
+}
+
+export async function fromServerInstance(serverInstance) {
+	var creationDescription = serverInstance.creationDescription;
+	var newInstance = await fromCreationDescriptionAsync(creationDescription);
+	newInstance.serverInstance = serverInstance;
+	return newInstance;
 }

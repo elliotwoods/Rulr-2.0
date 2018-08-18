@@ -25,12 +25,20 @@ export class Base extends Viewable {
 		this.viewportObject = new THREE.Object3D();
 	}
 
-	async update() {
-		await super.update();
+	async updateData() {
+		await super.updateData();
 
-		await this.header.update();
-		await this.parameters.update();
-		await this.components.update();
+		await this.header.updateData();
+		await this.parameters.updateData();
+		await this.components.updateData();
+	}
+
+	async updateView() {
+		await super.updateView();
+
+		await this.header.updateView();
+		await this.parameters.updateView();
+		await this.components.updateView();
 	}
 
 	async refreshData() {

@@ -1,5 +1,5 @@
 import { Base } from './Base.js'
-import { fromServerInstance } from '../Utils.js'
+import { fromServerInstance } from '../Imports.js'
 
 class Node extends Base {
 	constructor() {
@@ -7,11 +7,19 @@ class Node extends Base {
 		this.children = [];
 	}
 
-	async update() {
-		await super.update();
+	async updateData() {
+		await super.updateData();
 
 		for(var child of this.children) {
-			await child.update();
+			await child.updateData();
+		}
+	}
+
+	async updateView() {
+		await super.updateView();
+
+		for(var child of this.children) {
+			await child.updateView();
 		}
 	}
 

@@ -11,10 +11,6 @@ class Node extends Base {
 		
 		this.viewportObject.add(this.viewportCameraPreview);
 	}
-
-	async update() {
-		await super.update();
-	}
 }
 
 export { Node };

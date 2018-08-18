@@ -14,8 +14,8 @@ export class Base extends Viewable {
 		this.widget = new ComponentCard(this);
 	}
 
-	async update() {
-		await super.update();
+	async updateData() {
+		await super.updateData();
 		this.parameters.update();
 	}
 }

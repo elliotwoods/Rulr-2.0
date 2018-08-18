@@ -1,5 +1,5 @@
 import { Viewable } from './Viewable.js'
-import { fromServerInstance } from '../Utils.js'
+import { fromServerInstance } from '../Imports.js'
 import { Group } from '../Widgets/Group.js'
 
 export class AutoGroup extends Viewable {
@@ -24,13 +24,23 @@ export class AutoGroup extends Viewable {
 		});
 	}
 
-	async update() {
-		await super.update();
+	async updateData() {
+		await super.updateData();
 
 		let childKeys = this.getChildKeys();
 		// update all child Viewables
 		for (let childKey of childKeys) {
-			await this.children[childKey].update();
+			await this.children[childKey].updateData();
+		}
+	}
+
+	async updateView() {
+		await super.updateView();
+
+		let childKeys = this.getChildKeys();
+		// update all child Viewables
+		for (let childKey of childKeys) {
+			await this.children[childKey].updateView();
 		}
 	}
 
