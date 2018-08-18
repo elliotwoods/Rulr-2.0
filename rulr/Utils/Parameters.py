@@ -14,6 +14,9 @@ class Vector(rulr.Utils.Viewable):
 			"value" : self.value.tolist()
 		}
 
+	def get_value(self):
+		return self.value
+
 class BoundVector(Vector):
 	def __init__(self, value, lowerLimit, upperLimit, step = 0.0):
 		super().__init__(value)
@@ -38,3 +41,6 @@ class Matrix(rulr.Utils.Viewable):
 		return {
 			"value" : self.value.tolist()
 		}
+	
+	def get_value(self):
+		return self.value

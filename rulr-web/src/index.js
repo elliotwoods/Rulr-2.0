@@ -4,7 +4,9 @@ async function initialise() {
 	//always do this
 	{
 		let module = await import('./rulr-web/Imports.js');
-		module.setCallExportedObject(callExportedObject);
+		module.setCallExportedObjectMethod(callExportedObjectMethod);
+		module.setCallExportedObjectPropertyGet(callExportedObjectPropertyGet);
+		module.setCallExportedObjectPropertySet(callExportedObjectPropertySet);
 	}
 
 	if(!hasInitialised) {

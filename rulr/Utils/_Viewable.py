@@ -22,10 +22,3 @@ class Viewable(ABC):
 		return description
 	getViewDescription = export_method(get_view_description)
 
-	def get_creation_description(self):
-		return {
-			"module" : self.__module__[len("rulr."):],
-			"class" : self.__class__.__name__
-		}
-	getCreationDescription = export_method(get_creation_description)
-

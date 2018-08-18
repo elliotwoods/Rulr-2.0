@@ -1,6 +1,6 @@
 import importlib
-import rulr.Utils
-from rulr.Utils import export_method
+from rulr.Utils.AutoGroup import AutoGroup
+from rulr.Utils import export_method, Viewable
 
 from enum import Enum
 
@@ -24,13 +24,13 @@ class Header:
 	getDescription = export_method(get_description)
 
 
-class Base(rulr.Utils.Viewable):
+class Base(Viewable):
 	def __init__(self):
 		self.header = Header()
 		self.header.name = self.get_module_name()
 
-		self.parameters = rulr.Utils.AutoGroup()
-		self.components = rulr.Utils.AutoGroup()
+		self.parameters = AutoGroup()
+		self.components = AutoGroup()
 
 	def deserialize(self, description):
 		pass

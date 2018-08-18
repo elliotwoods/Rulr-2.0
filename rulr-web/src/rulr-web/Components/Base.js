@@ -14,13 +14,8 @@ export class Base extends Viewable {
 		this.widget = new ComponentCard(this);
 	}
 
-	async updateViewDescriptionAsync(descriptionContent) {
-		if('parameters' in descriptionContent) {
-			this.parameters.updateViewDescriptionAsync(descriptionContent.parameters.content);
-		}
-	}
-
-	update() {
+	async update() {
+		await super.update();
 		this.parameters.update();
 	}
 }

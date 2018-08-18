@@ -1,8 +1,9 @@
 import rulr.Utils
+from rulr.Utils.AutoGroup import AutoGroup
 
 class Base(rulr.Utils.Viewable):
 	def __init__(self):
-		self.parameters = rulr.Utils.AutoGroup()
+		self.parameters = AutoGroup()
 		pass
 
 	def get_view_description_content(self, viewDescriptionArguments):

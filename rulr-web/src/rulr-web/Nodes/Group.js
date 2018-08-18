@@ -9,13 +9,14 @@ class Node extends Base {
 
 	async update() {
 		await super.update();
+
 		for(var child of this.children) {
 			await child.update();
 		}
 	}
 
-	async refresh() {
-		await super.refresh();
+	async refreshData() {
+		await super.refreshData();
 
 		// Get list of children on server side
 		var serverChildIDs = await this.serverInstance.getChildIDs();
@@ -25,11 +26,6 @@ class Node extends Base {
 
 		//TODO : Add an 'isValid' method to all exported objects (to check if they are stale + check it here)
 		//TODO : we could pass the server instances over to the server to check for validity
-
-		//refresh any current children
-		for(let child of this.children) {
-			await child.refresh();
-		}
 
 		//add any missing children
 		var currentChildrenByIDs = this.getChildrenByID();

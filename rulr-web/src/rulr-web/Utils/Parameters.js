@@ -5,21 +5,42 @@ import * as MatrixWidget from '../Widgets/Matrix.js'
 import { Viewable } from '../Utils/Viewable.js'
 
 export class Base extends Viewable {
+	constructor() {
+		super();
+		this.value = null;
+		this.needsPullValue = true; // TODO : Currently this only ever happens once
+		this.needsPushValue = false;
+	}
 
+	async update() {
+		if(this.needsPullValue) {
+			this.value = await this.serverInstance.value_get();
+			this.needsPullValue = false;
+			this.needsGuiUpdate = true;
+		}
+
+		if(this.needsPushValue) {
+			await this.serverInstance.value_set(this.value);
+			this.needsPushValue = false;
+		}
+
+		await super.update();
+	}
 }
 
 export class Vector extends Base {
 	constructor() {
 		super();
 		this.value = [];
-		this.value.length = length;
 
 		this.childWidgets = [];
-		this.widget = new Group(() => this.childWidgets);
+		this.widget = new Group(() => {
+			return this.childWidgets;
+		});
 	}
 
-	async updateViewDescriptionAsync(descriptionContent) {
-		this.value = descriptionContent.value;
+	async guiUpdate() {
+		await super.guiUpdate();
 
 		// build any missing child widgets
 		for(var i=this.childWidgets.length; i<this.value.length; i++) {
@@ -28,6 +49,7 @@ export class Vector extends Base {
 				return this.value[index];
 			}, (value) => {
 				this.value[index] = value
+				this.needsPushValue = true;
 			});
 			childWidget.caption = i.toString();
 			childWidget.needsRedraw = true;
@@ -49,28 +71,17 @@ export class BoundVector extends Vector {
 		this.upperLimit = 0.0;
 		this.step = 0.0;
 	}
-
-	async updateViewDescriptionAsync(descriptionContent) {
-		await super.updateViewDescriptionAsync(descriptionContent);
-
-		this.lowerLimit = descriptionContent.lowerLimit;
-		this.upperLimit = descriptionContent.upperLimit;
-		this.step = 0.0;
-	}
 }
 
 export class Matrix extends Base {
 	constructor() {
 		super();
+
 		this.value = [];
 		this.widget = new MatrixWidget.Matrix(() => {
 			return this.value;
 		}, (newValue) => {
 			this.value = newValue;
 		});
-	}
-
-	async updateViewDescriptionAsync(descriptionContent) {
-		this.value = descriptionContent.value;
 	}
 }

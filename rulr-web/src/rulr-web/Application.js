@@ -1,4 +1,4 @@
-import { showException, fromViewDescriptionAsync, fromServerInstance } from './Utils.js'
+import { showException, fromServerInstance } from './Utils.js'
 import { pyCall } from './Imports.js'
 import { Window } from './Interface/Window.js'
 class Application {
@@ -52,7 +52,7 @@ class Application {
 
 	update() {
 		if(this.rootNode != null) {
-			//this.rootNode.update();
+			this.rootNode.update();
 		}
 		this.window.update();
 	}

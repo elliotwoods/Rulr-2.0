@@ -7,8 +7,8 @@ export class Header extends Viewable {
 		this.description = {};
 	}
 
-	async refresh() {
-		await super.refresh();
+	async refreshData() {
+		await super.refreshData();
 		this.description = await this.serverInstance.getDescription();
 	}
 };
@@ -33,8 +33,8 @@ export class Base extends Viewable {
 		await this.components.update();
 	}
 
-	async refresh() {
-		await super.refresh();
+	async refreshData() {
+		await super.refreshData();
 
 		this.header.serverInstance = await this.serverInstance.getHeader();
 		this.parameters.serverInstance = await this.serverInstance.getParameters();

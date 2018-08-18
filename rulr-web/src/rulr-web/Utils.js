@@ -40,7 +40,7 @@ export function showException(exception) {
 			alert.find('ul').append(`<li>${arg}</li>`);
 		}
 
-		for (var tracebackEntry in exception.traceback) {
+		for (var tracebackEntry of exception.traceback) {
 			alert.find('ol').append(`
 		<li>
 			<strong>${tracebackEntry.filename}:${tracebackEntry.lineNumber}</strong> <br />
@@ -147,21 +147,8 @@ export async function fromCreationDescriptionAsync(creationDescription) {
 	return newInstance;
 }
 
-export async function fromViewDescriptionAsync(description) {
-	var newInstance = await fromCreationDescriptionAsync(description);
-
-	if (typeof newInstance.updateViewDescriptionAsync === 'function') {
-		await newInstance.updateViewDescriptionAsync(description.content);
-	}
-	else {
-		throw new Error(`${description.module}::${description.class} does not implement updateViewDescriptionAsync`);
-	}
-
-	return newInstance;
-}
-
 export async function fromServerInstance(serverInstance) {
-	var creationDescription = await serverInstance.getCreationDescription();
+	var creationDescription = serverInstance.creationDescription;
 	var newInstance = await fromCreationDescriptionAsync(creationDescription);
 	newInstance.serverInstance = serverInstance;
 	return newInstance;
