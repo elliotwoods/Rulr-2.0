@@ -128,13 +128,14 @@ export class Matrix extends Base {
 				else if(absValue >= 1.0) {
 					var digitsBeforePoint = Math.floor(Math.log10(absValue)) + 1;
 					if(digitsBeforePoint >= this._SIGNIFICANT_FIGURES) {
-						//More than sig figs before 0
-						cellValueString = Math.floor(absValue).toString() + ".";
+						//More than sig figs before decimal point. truncate at decimal point
+						cellValueString = Math.round(absValue).toString() + ".";
 					}
 					else {
+						//Less than sig figs before decimal point. truncate after decimal point
 						var digitsAfterPoint = this._SIGNIFICANT_FIGURES - digitsBeforePoint;
 						var power = Math.pow(10, digitsAfterPoint);
-						cellValueString = (Math.floor(absValue * power) / power).toString();
+						cellValueString = (Math.round(absValue * power) / power).toString();
 					}
 
 					if(cellValue < 0) {
@@ -148,8 +149,9 @@ export class Matrix extends Base {
 						//do nothing - print short value 
 					}
 					else {
+						// print small value truncated
 						var power = Math.pow(10, this._SIGNIFICANT_FIGURES - 1);
-						cellValueString = (Math.floor(absValue * power) / power).toString();
+						cellValueString = (Math.round(absValue * power) / power).toString();
 						if(cellValue < 0) {
 							cellValueString = "-" + cellValueString;
 						}

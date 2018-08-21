@@ -178,14 +178,20 @@ export class Numeric extends Base {
 		var valueString = Math.abs(this.valueCache).toFixed(this.decimalPlaces);
 		var reverseValueString = valueString.split("").reverse().join("");
 
+		var cleanedValue = this.valueCache;
+		{
+			var pow = Math.pow(10, this.decimalPlaces);
+			cleanedValue = Math.round(cleanedValue * pow) / pow;
+		}
+
 		for (var key of keys) {
 			var div = this.digitDivs[key];
 
 			if (key == "sign") {
-				if(this.valueCache > 0) {
+				if(cleanedValue > 0) {
 					div.html('+');
 				}
-				else if(this.valueCache == 0) {
+				else if(cleanedValue == 0) {
 					div.html('&nbsp;');
 				}
 				else {
@@ -198,14 +204,14 @@ export class Numeric extends Base {
 				var digit = getDigitFromValueString(reverseValueString, exponent, this.decimalPlaces);
 				div.html(digit);
 
-				if (this.valueCache < 0) {
+				if (cleanedValue < 0) {
 					div.addClass('rulr-widget-digit-negative');
 				}
 				else {
 					div.removeClass('rulr-widget-digit-negative');
 				}
 
-				if (Math.abs(this.valueCache) < Math.pow(10, exponent)) {
+				if (Math.abs(cleanedValue) < Math.pow(10, exponent)) {
 					div.addClass('rulr-widget-digit-greyed');
 					div.removeClass('rulr-widget-digit-negative');
 				}
