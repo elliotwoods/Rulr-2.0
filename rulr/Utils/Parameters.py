@@ -1,18 +1,19 @@
 import rulr.Utils
+import numpy as np
 
-class Base(object):
-	def __init__(self):
-		pass
-	
-class Vector(rulr.Utils.Viewable):
+class Base(rulr.Utils.Viewable):
 	def __init__(self, value):
 		super().__init__()
 		self.value = value
-	
-	def getViewDescriptionContent(self, viewDescriptionArguments):
-		return {
-			"value" : self.value.tolist()
-		}
+		pass
+
+class Float(Base):
+	def __init__(self, value):
+		super().__init__(value)
+
+class Vector(Base):
+	def __init__(self, value):
+		super().__init__(np.array(value, dtype=float))
 
 class BoundVector(Vector):
 	def __init__(self, value, lowerLimit, upperLimit, step = 0.0):
@@ -21,20 +22,11 @@ class BoundVector(Vector):
 		self.upperLimit = upperLimit
 		self.step = step
 
-	def getViewDescriptionContent(self, viewDescriptionArguments):
-		return {
-			"value" : self.value.tolist(),
-			"lowerLimit" : self.lowerLimit,
-			"upperLimit" : self.upperLimit,
-			"step" : self.step
-		}
-
-class Matrix(rulr.Utils.Viewable):
+class Matrix(Base):
 	def __init__(self, value):
-		super().__init__()
-		self.value = value
+		super().__init__(np.array(value, dtype=float))
+
+	def set_from_flat_list(self, newValue):
+		if self.value.size != len(newValue):
+			raise Exception("Cannot set Matrix of shape {} with flat list of length {}".format(self.value.shape, len(newValue)))
 		
-	def getViewDescriptionContent(self, viewDescriptionArguments):
-		return {
-			"value" : self.value.tolist()
-		}

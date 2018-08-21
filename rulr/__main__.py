@@ -3,33 +3,24 @@ import os
 import IPython
 from werkzeug.serving import run_simple
 from werkzeug.wsgi import SharedDataMiddleware
+from cefpython3 import cefpython as cef
+import sys
+import http.server
+import threading
+from rulr.Utils._Exports import call_exported_object_method, call_exported_object_property_get, call_exported_object_property_set
 
-import rulr.Nodes
-import rulr.Resources
+import rulr.Application
 
-if __name__ == "__main__":
-	"""
-	grid = rulr.Nodes.Base.fromDescription({
-		'moduleName' : 'Nodes.Debug',
-		'className' : 'Grid',
-		'children' : [
-			{
-				'moduleName' : 'Nodes',
-				'className' : 'Base'
-			}
-		]
-	})
-	"""
-
+"""
+def start_falcon():
 	api = falcon.API()
 
 	# Auto-handle all resources
 	rulr.Resources.initializeResources(api)
 	
 	# Build a new api which handles static files
-	clientFilesPath = os.path.abspath('Client')
 	apiWithStatic = SharedDataMiddleware(api, {
-		'/Client' : (os.path.join(os.path.dirname(__file__), '..', 'rulr-web')),
+		'/rulr-web' : (os.path.join(os.path.dirname(__file__), '..', 'rulr-web')),
 		'/Nodes' : (os.path.join(os.path.dirname(__file__), 'Nodes'))
 	})
 
@@ -43,3 +34,53 @@ if __name__ == "__main__":
 	, 4000
 	, apiWithStatic
 	, threaded=True)
+"""
+
+def browser_on_after_created(browser, **_):
+	pass
+
+class ClientHandler():
+	def OnLoadingStateChange(self, browser, is_loading, **_):
+		if not is_loading:
+			bindings = cef.JavascriptBindings()
+			bindings.SetFunction("get_application_export", rulr.Application.get_application_export)
+			bindings.SetFunction("callExportedObjectMethod", call_exported_object_method)
+			bindings.SetFunction("callExportedObjectPropertyGet", call_exported_object_property_get)
+			bindings.SetFunction("callExportedObjectPropertySet", call_exported_object_property_set)
+			browser.SetJavascriptBindings(bindings)
+			
+			browser.ExecuteFunction("initialise")
+	
+	#def OnConsoleMessage(self, browser, message, **_):
+	#	print ("JS Console Message : {0}".format(message))
+
+if __name__ == "__main__":
+	# start_falcon()
+	# Here we could initialise the Falcon API. But we turn it off for the time being
+	# Later to bring it back, we'd need to think more about how it works
+
+
+	server = http.server.HTTPServer(('127.0.0.1', 4000), http.server.SimpleHTTPRequestHandler)
+	serverThread = threading.Thread(target=server.serve_forever, args=())
+	serverThread.daemon = True
+	serverThread.start()
+
+	sys.excepthook = cef.ExceptHook  # To shutdown all CEF processes on error
+	cef.SetGlobalClientCallback("OnAfterCreated", browser_on_after_created)
+	cef.Initialize(settings={
+		"remote_debugging_port": 49155
+	})
+
+	#TODO(elliot) : Version numbering (automatic)
+	browser = cef.CreateBrowserSync(url='http://127.0.0.1:{0}/rulr-web/html/index.html'.format(server.server_port),
+									window_title="Rulr",
+									settings = {
+										"application_cache_disabled" : True
+										# "web_security_disabled" : True
+									})
+
+	clientHandler = ClientHandler()
+	browser.SetClientHandler(clientHandler)
+
+	cef.MessageLoop()
+	cef.Shutdown()

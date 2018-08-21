@@ -7,15 +7,19 @@ export class ComponentCard extends Base {
 	constructor(component) {
 		super();
 		this.component = component;
-		this.component.parameters.widget.showDefaultTitle = false;
 
 		this.showDefaultTitle = false;
 		this.componentCard = null;
 	}
 
-	draw() {
-		super.draw();
-		
+	async init() {
+		super.init();
+		this.component.parameters.widget.showDefaultTitle = false;
+	}
+
+	firstDraw() {
+		super.firstDraw();
+
 		// Create the card
 		{
 			var nodeItemTemplateHTML = $("#Inspector-ComponentTemplate").first().html();
@@ -27,6 +31,8 @@ export class ComponentCard extends Base {
 		{
 			this.componentCard.find('#inspector-card-name').html(Utils.camelCapsToSentanceCaps(this.caption));
 			var innerList = this.componentCard.find('#inspector-card-content');
+
+			//Add the parameter widgets to the list
 			this.component.parameters.widget.appendTo(innerList);
 
 			let toolBar = this.componentCard.find('#toolBar');

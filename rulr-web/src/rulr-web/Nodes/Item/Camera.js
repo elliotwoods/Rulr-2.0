@@ -5,15 +5,15 @@ import { Base } from '../Base.js'
 class Node extends Base {
 	constructor() {
 		super();
+	}
+
+	async init() {
+		await super.init();
 
 		this.viewportCamera = new THREE.PerspectiveCamera();
 		this.viewportCameraPreview = new THREE.CameraHelper(this.viewportCamera);
 		
 		this.viewportObject.add(this.viewportCameraPreview);
-	}
-
-	update() {
-		super.update();
 	}
 }
 

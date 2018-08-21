@@ -41,12 +41,13 @@ rulr-widgets-scrollcontainer {
 .rulr-widget-numeric-digit {
 	font-family: 'Courier New', Courier, monospace;
 	border: 1px solid #eee;
-	margin: 3px;
+	font-size: 14px;
+	margin: 0.2em;
 	padding: 0px;
 	text-align: center;
-	width: 25px;
+	width: 2em;
 	display: inline-block;
-	border-radius: 10px;
+	border-radius: 0.75em;
 	background: #fff;
 	cursor: n-resize;
 }
@@ -69,19 +70,19 @@ rulr-widgets-scrollcontainer {
 .rulr-widget-numeric-decimalpoint {
 	font-family: 'Courier New', Courier, monospace;
 	border: none;
-	margin: 3px;
+	margin: 0.2em;
 	text-align: center;
-	width: 20px;
+	width: 1.5em;
 }
 
 .rulr-widget-numeric-sign {
 	font-family: 'Courier New', Courier, monospace;
-	font-size: 150%;
-	margin: 3px;
+	font-size: 14px;
+	margin: 0.2em;
 	padding: 0px;
 	text-align: center;
 	display: inline-block;
-	width: 15px;
+	width: 1em;
 }
 .rulr-widget-digit-greyed {
 	background: none;
@@ -111,6 +112,11 @@ rulr-widgets-scrollcontainer {
 	padding-left: 0px;
 }
 
+.rulr-widgets-matrix-container {
+	overflow: auto;
+	width: 100%;
+}
+
 .rulr-widgets-matrix-table {
 	border: none;
 }
@@ -119,15 +125,20 @@ rulr-widgets-scrollcontainer {
 	border: none;
 }
 
-.rulr-widgets-matrix-table-cell {
+td.rulr-widgets-matrix-table-cell {
 	font-family: 'Courier New', Courier, monospace;
+	font-size: 12px;
 	text-align: right;
+	white-space: nowrap;
+	padding-left: 0.2em;
+	padding-right: 0.2em;
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;
 }
 
 .rulr-widgets-matrix-table-cellcontent {
-	font-family: 'Courier New', Courier, monospace;
-	text-align: center;
 }
+
 
 .rulr-widgets-matrix-table-cellcontent:link {
 	color: grey;

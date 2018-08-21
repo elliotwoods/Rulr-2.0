@@ -4,8 +4,13 @@ class Node(rulr.Nodes.Base):
 	def __init__(self):
 		super().__init__()
 		self.children = []
+
+	def update(self):
+		super().update()
+		for child in self.children:
+			child.update()
 	
-	def getNextAvailableChildID(self):
+	def get_next_available_child_ID(self):
 		if len(self.children) == 0:
 			return 0
 		else:
@@ -14,40 +19,35 @@ class Node(rulr.Nodes.Base):
 				childIDS.append(child.header.ID)
 			return sorted(childIDS)[-1] + 1
 
-	def checkForChildIDConflicts(self):
+	def check_for_child_ID_conflicts(self):
 		IDsInUse = []
 		for child in self.children:
 			if child.header.ID in IDsInUse:
-				child.header.ID = self.getNextAvailableChildID()
+				child.header.ID = self.get_next_available_child_ID()
 			IDsInUse.append(child.header.ID)
 
 	def deserialize(self, description):
 		if 'children' in description:
 			for childDescription in description['children']:
-				newChildNode = rulr.Nodes.fromDescription(childDescription)
+				newChildNode = rulr.Nodes.from_description(childDescription)
 				self.children.append(newChildNode)
-				self.checkForChildIDConflicts()
+				self.check_for_child_ID_conflicts()
 
-	def getChildByID(self, childID):
+	def get_child_by_ID(self, childID):
 		for child in self.children:
 			if child.header.ID == childID:
 				return child
 		raise Exception("Node does not have child with ID={0}".format(childID))
-
-	def getChildByPath(self, nodePath):
+	
+	def get_child_by_path(self, nodePath):
 		if nodePath == []:
 			return self
 		else:
-			childNode = self.getChildByID(nodePath[0])
-			return childNode.getChildByPath(nodePath[1:])
+			childNode = self.get_child_by_ID(nodePath[0])
+			return childNode.get_child_by_path(nodePath[1:])
 
-	def getViewDescriptionContent(self, viewDescriptionArguments):
-		description = super().getViewDescriptionContent(viewDescriptionArguments)
-
-		# Children
-		if viewDescriptionArguments.recursive:
-			description["children"] = []
-			for child in self.children:
-				description["children"].append(child.getViewDescription(viewDescriptionArguments))
-
-		return description
+	def get_child_IDs(self):
+		childIDs = []
+		for child in self.children:
+			childIDs.append(child.header.ID)
+		return childIDs

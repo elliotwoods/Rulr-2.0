@@ -1,38 +1,47 @@
-import * as Utils from './Utils.js'
+import { showException } from './Utils.js'
+import { fromServerInstance } from './Imports.js'
+import { pyCall } from './Imports.js'
 import { Window } from './Interface/Window.js'
-
 class Application {
 	constructor() {
 		this.window = new Window();
 		this.rootNode = null;
 		this.explorerNodePath = [];
 		this.selection = null;
-		this.refresh();
+		this.serverInstance = null;
+	}
+
+	async initialise(serverApplication) {
+		try {
+			this.serverInstance = serverApplication;
+			await this.refresh();
+
+			// start the regular update
+			regularUpdate();
+		}
+		catch (exception) {
+			showException(exception);
+		}
 	}
 
 	async refresh() {
-		var status = null;
-
-		// Get the application status
-		await Utils.asyncRequest("/Application/Graph/GetStatus", {}, (applicationStatus) => {
-			status = applicationStatus;
-		});
+		if (this.serverInstance == null) {
+			throw ("Server application is not available");
+		}
 
 		// Check if the application is loaded
-		if(status.hasRootNode) {
-			await Utils.asyncRequest("/Application/Graph/GetViewDescription"
-			, {
-				nodePath : []
-			}, async (response) => {
-				// Populate the local graph
-				this.rootNode = await Utils.fromViewDescriptionAsync(response.nodeViewDescription);
+		if (await this.serverInstance.has_root_node()) {
+			var nodeServerInstance = await this.serverInstance.get_node_by_path([]);
+			this.rootNode = await fromServerInstance(nodeServerInstance);
 
-				// Set the selection to the first node (temporary - until we have click selection)
-				application.selection = application.rootNode.getChildByPath([0]);
+			// We must update before setting the selection (otherwise it won't be populated)
+			await this.rootNode.updateData();
 
-				// Refresh the interface
-				this.window.refresh();
-			});
+			// Set the selection to the first node (temporary - until we have click selection)
+			this.selection = this.rootNode.getChildByPath([0]);
+
+			// Refresh the interface
+			this.window.refresh();
 		}
 		else {
 			// If not loaded, pop up the load project dialog
@@ -42,9 +51,11 @@ class Application {
 		}
 	}
 
-	update() {
-		if(this.rootNode != null) {
-			this.rootNode.update();
+	async update() {
+		await this.serverInstance.update();
+		if (this.rootNode != null) {
+			await this.rootNode.updateData();
+			await this.rootNode.updateView();
 		}
 		this.window.update();
 	}
@@ -56,23 +67,28 @@ class Application {
 	getSelection() {
 		return this.selection;
 	}
+
+	selectNode(nodeInstance) {
+		this.selection = nodeInstance;
+		this.window.inspector.needsRefresh = true;
+	}
 }
 
 function getVisibleNodeAndChildren(node) {
-	if(node == null) {
+	if (node == null) {
 		return [];
 	}
 
-	if(node != null && node.header.visible) {
+	if (node != null && node.header.description.visible) {
 		var visibleNodes = [];
 
 		visibleNodes.push(node);
-		if('children' in node) {
+		if ('children' in node) {
 			node.children.forEach((child) => {
 				visibleNodes = visibleNodes.concat(getVisibleNodeAndChildren(child));
 			});
 		}
-		
+
 		return visibleNodes;
 	}
 	else {
@@ -82,13 +98,9 @@ function getVisibleNodeAndChildren(node) {
 
 var application = new Application();
 
-function update() {
-	requestAnimationFrame(update);
-	application.update();
+let applicationLockUpdate = false;
+function regularUpdate() {
+	application.update().then(regularUpdate);
 }
-
-$(document).ready(() => {
-	update();
-});
 
 export { application };

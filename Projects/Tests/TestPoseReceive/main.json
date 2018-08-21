@@ -5,9 +5,9 @@
 	"content" : {
 		"children" : [
 			{
-				"moduleName" : "Item.Camera",
+				"moduleName" : "Helpers.Axis",
 				"header" : {
-					"name" : "Camera",
+					"name" : "Axis",
 					"ID" : 0
 				},
 				"content" : {
@@ -20,6 +20,16 @@
 					"ID" : 1
 				},
 				"content" : {
+				}
+			},
+			{
+				"moduleName" : "ARKit.TestPoseReceive2",
+				"header" : {
+					"name" : "TestPoseReceive",
+					"ID" : 3
+				},
+				"content" : {
+
 				}
 			}
 		]

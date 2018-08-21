@@ -1,9 +1,9 @@
 {
-    "python.pythonPath": "C:\\Users\\kimchips\\Anaconda3\\envs\\Rulr\\python.exe",
-    "editor.insertSpaces": false,
-    "workbench.colorTheme": "Solarized Dark",
-    "files.exclude": {
-        "**/rulr-web": true
-    },
-    "python.jediEnabled": false
+	"python.pythonPath": "C:\\Users\\kimchips\\Anaconda3\\envs\\Rulr\\python.exe",
+	"editor.insertSpaces": false,
+	"files.exclude": {
+		"**/blob_storage": true,
+		"**/node_modules" : true
+	},
+	"python.jediEnabled": false
 }

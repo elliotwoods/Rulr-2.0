@@ -1,23 +1,16 @@
-from rulr.Utils.Viewable import Viewable
+from rulr.Utils._Viewable import Viewable
 
 class AutoGroup(Viewable):
 	"""Automatically serialises its member attributes"""
 
 	def __init__(self):
+		super().__init__()
 		pass
 
-	def getViewDescriptionContent(self, viewDescriptionArguments):
-		dictionaryOfAttributes = self.__dict__.copy()
+	def get_child_names(self):
+		attributeNames = dir(self)
+		viewableChildren = [attribute for attribute in attributeNames if isinstance(getattr(self, attribute), Viewable)]
+		return viewableChildren
 
-		description = {}
-
-		# Iterate through attributes of the Group
-		for key in dictionaryOfAttributes.keys():
-			value = dictionaryOfAttributes[key]
-
-			# get the view description of the child
-			getChildDescription = getattr(value, 'getViewDescription', None)
-			if callable(getChildDescription):
-				description[key] = getChildDescription(viewDescriptionArguments)
-
-		return description
+	def get_child_by_name(self, name):
+		return getattr(self, name)

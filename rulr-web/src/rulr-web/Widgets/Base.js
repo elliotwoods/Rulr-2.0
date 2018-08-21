@@ -6,7 +6,7 @@ export class Base {
 	constructor() {
 		this.watchViewables = [];
 		this.onEditListeners = [];
-		this.needsRedraw = true;
+		this.needsRedraw = false;
 		this.caption = this.constructor.name;
 
 		this.content = null;
@@ -37,26 +37,20 @@ export class Base {
 			this.content.appendTo(parentDomElement);
 		}
 		
+		this.content.empty();
 		this.firstDraw();
+		this.needsRedraw = true;
 	}
 
 	update() {
-		for(var watchViewable of this.watchViewables) {
-			if(watchViewable.isFrameNew) {
-				this.needsRedraw = true;
-				break;
-			}
-		}
-
 		if (this.needsRedraw && this.content != null) {
-			this.content.empty();
 			this.draw();
 			this.needsRedraw = false;
 		}
 	}
 
 	firstDraw() {
-		
+		this.content.empty();
 	}
 
 	draw() {

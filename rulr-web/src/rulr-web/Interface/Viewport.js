@@ -79,7 +79,17 @@ class Viewport extends Element {
 		}
 	}
 
+	async update() {
+		await super.update();
+
+		this.orbitControls.update();
+		this.raycast();
+		this.render();
+	}
+
 	async refresh() {
+		await super.refresh();
+
 		var visibleNodes = application.getVisibleNodes();
 
 		var visibleViewportObjects = [];
@@ -122,12 +132,6 @@ class Viewport extends Element {
 
 	onDocumentMouseUp(event) {
 		
-	}
-
-	update() {
-		this.orbitControls.update();
-		this.raycast();
-		this.render();
 	}
 
 	render() {

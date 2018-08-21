@@ -1,10 +1,15 @@
 import importlib
-import rulr.Utils
+import queue
+
+from rulr.Utils.AutoGroup import AutoGroup
+from rulr.Utils import Viewable
 
 from enum import Enum
 
-class Header:
+
+class Header(Viewable):
 	def __init__(self):
+		super().__init__()
 		self.ID = 0
 		self.name = ""
 		self.visible = True
@@ -17,38 +22,48 @@ class Header:
 		if 'visible' in description:
 			self.visible = description['visible']
 
-class Base(rulr.Utils.Viewable):
-	def __init__(self):
-		self.header = Header()
-		self.header.name = self.getModuleName()
+	def get_description(self):
+		return self.__dict__
 
-		self.parameters = rulr.Utils.AutoGroup()
-		self.components = rulr.Utils.AutoGroup()
+
+class Base(Viewable):
+	def __init__(self):
+		super().__init__()
+
+		self.header = Header()
+		self.header.name = self.get_module_name()
+
+		self.parameters = AutoGroup()
+		self.components = AutoGroup()
+
+		self.update_action_queue = queue.Queue()
+		self.frame_exception_queue = queue.Queue()
 
 	def deserialize(self, description):
 		pass
 
-	def serialize(self):
+	def serialise(self):
 		pass
 
-	def getViewDescriptionContent(self, viewDescriptionArguments):
-		# Header
-		description = {
-			"header" : self.header.__dict__
-		}
-
-		# Content
-		description["parameters"] = self.parameters.getViewDescription(viewDescriptionArguments)
-		description["components"] = self.components.getViewDescription(viewDescriptionArguments)
-
-		return description
-
-	def getModuleName(self):
+	def update(self):
+		# Perform all actions in the update_action_queue
+		while not self.update_action_queue.empty():
+			try:
+				action = self.update_action_queue.get(False)
+				try:
+					action()
+					self.update_action_queue.task_done()
+				except Exception as e:
+					self.frame_exception_queue.put(e)
+			except:
+				break
+	
+	def get_module_name(self):
 		longName = self.__class__.__module__
 		shortName = longName[len("rulr.Nodes."):]
 		return shortName
 
-	def getChildByPath(self, nodePath):
+	def get_child_by_path(self, nodePath):
 		if nodePath == []:
 			return self
 		else:
@@ -57,17 +72,12 @@ class Base(rulr.Utils.Viewable):
 			raise Exception("Cannot get child with nodePath=[{0}]. This node is not a Group, it is a [{1}]".format(nodePathString, ourModuleName))
 
 
-
-
-def fromDescription(description):
+def from_description(description):
 	module = importlib.import_module('rulr.Nodes.' + description['moduleName'])
 	newNodeInstance = module.Node()
 
 	if 'header' in description:
 		newNodeInstance.header.deserialize(description['header'])
-
-	if 'name' in description:
-		newNodeInstance.name = description['name']
 
 	if 'content' in description:
 		newNodeInstance.deserialize(description['content'])

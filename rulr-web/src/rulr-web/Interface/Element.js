@@ -3,6 +3,8 @@ export class Element {
 		this.ready = false;
 		this.whenReadyActions = [];
 
+		this.needsRefresh = true;
+
 		var className = this.constructor.name;
 
 		$(document).ready(() => {
@@ -23,5 +25,16 @@ export class Element {
 		else {
 			this.whenReadyActions.push(action);
 		}
+	}
+
+	async update() {
+		if(this.needsRefresh) {
+			await this.refresh();
+			this.needsRefresh = false;
+		}
+	}
+
+	async refresh() {
+		
 	}
 }

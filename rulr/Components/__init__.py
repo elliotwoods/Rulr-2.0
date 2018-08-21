@@ -1,15 +1,14 @@
 import rulr.Utils
+from rulr.Utils.AutoGroup import AutoGroup
 
 class Base(rulr.Utils.Viewable):
 	def __init__(self):
-		self.parameters = rulr.Utils.AutoGroup()
-		pass
+		super().__init__()
 
-	def getViewDescriptionContent(self, viewDescriptionArguments):
-		description = {}
-		description["parameters"] = self.parameters.getViewDescription(viewDescriptionArguments)
-		return description
+		self.parameters = AutoGroup()
+		pass
 
 class ComponentGroup(object):
 	def __init__(self):
+		super().__init__()
 		pass

@@ -1,44 +1,65 @@
-import {Viewable} from '../Utils/Viewable.js'
-import {AutoGroup} from '../Utils/AutoGroup.js'
+import { Viewable } from '../Utils/Viewable.js'
+import { AutoGroup } from '../Utils/AutoGroup.js'
+
+export class Header extends Viewable {
+	constructor() {
+		super();
+		this.description = {};
+	}
+
+	async pullData() {
+		await super.pullData();
+		this.description = await this.serverInstance.get_description();
+	}
+};
 
 export class Base extends Viewable {
 	constructor() {
 		super();
 
-		this.header = {};
-		this.parameters = new AutoGroup();
-		this.components = new AutoGroup();
-
+		// Every node has a base viewportObject. To draw to the 3D viewport, add children to this viewportObject
 		this.viewportObject = new THREE.Object3D();
+
+		// These are created during init
+		this.header = null;
+		this.parameters = null;
+		this.components = null;
 	}
 
-	refresh() {
-		Utils.request("/Application/Graph/GetViewDescription"
-		,{
-			"nodePath" : this.nodePath
-		}
-		, response => {
-			this.header = response.nodeViewDescription.header;
-		});
+	async init() {
+		await super.init();
+
+		// TODO : this is a semi-manual way of importing objects - look into using fromServerInstance function in future to avoid any issues
+		this.header = new Header();
+		this.header.serverInstance = await this.serverInstance.header.get();
+
+		this.parameters = new AutoGroup();
+		this.parameters.serverInstance = await this.serverInstance.parameters.get();
+
+		this.components = new AutoGroup();
+		this.components.serverInstance = await this.serverInstance.components.get();
 	}
 
-	update() {
-		this.parameters.update();
-		this.components.update();
+	async updateData() {
+		await this.header.updateData();
+		await this.parameters.updateData();
+		await this.components.updateData();
+
+		// First update often relies on the content of the parameter and component groups
+		// Since group members can change at runtime, this means that the members should be fetched per update loop
+		await super.updateData();
 	}
 
-	async updateViewDescriptionAsync(descriptionContent) {
-		this.header = descriptionContent.header;
-		if('parameters' in descriptionContent) {
-			await this.parameters.updateViewDescriptionAsync(descriptionContent.parameters.content);
-		}
-		if('components' in descriptionContent) {
-			await this.components.updateViewDescriptionAsync(descriptionContent.components.content);
-		}
+	async updateView() {
+		await super.updateView();
+
+		await this.header.updateView();
+		await this.parameters.updateView();
+		await this.components.updateView();
 	}
 
 	getChildByPath(nodePath) {
-		if(nodePath.length == 0) {
+		if (nodePath.length == 0) {
 			return this;
 		}
 		else {

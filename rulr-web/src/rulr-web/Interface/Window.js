@@ -11,19 +11,22 @@ class Window {
 		this.loadProjectDialog = new LoadProjectDialog();
 	}
 
-	refresh() {
-		this.viewport.refresh();
-		this.worldExplorer.refresh();
-		this.inspector.refresh();
-	}
-
-	update() {
+	async update() {
 		if(this.viewport.ready) {
-			this.viewport.update();
+			await this.viewport.update();
+		}
+		if(this.worldExplorer.ready) {
+			await this.worldExplorer.update();
 		}
 		if(this.inspector.ready) {
-			this.inspector.update();
+			await this.inspector.update();
 		}
+	}
+
+	async refresh() {
+		await this.viewport.refresh();
+		await this.worldExplorer.refresh();
+		await this.inspector.refresh();
 	}
 }
 

@@ -5,10 +5,19 @@
 	"content" : {
 		"children" : [
 			{
-				"moduleName" : "Debug.Grid",
+				"moduleName" : "Helpers.Axis",
+				"header" : {
+					"name" : "Axis",
+					"ID" : 0
+				},
+				"content" : {
+				}
+			},
+			{
+				"moduleName" : "Helpers.Grid",
 				"header" : {
 					"name" : "Grid",
-					"ID" : 0
+					"ID" : 1
 				},
 				"content" : {
 				}
