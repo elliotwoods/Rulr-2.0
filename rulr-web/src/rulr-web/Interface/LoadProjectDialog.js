@@ -16,7 +16,7 @@ class LoadProjectDialog extends Element {
 	async refresh(folderPath) {
 		await super.refresh();
 		
-		var projectList = await pyCall(application.serverInstance.listProjects, folderPath);
+		var projectList = await application.serverInstance.list_projects(folderPath);
 		
 		// breadcrumbs
 		{
@@ -104,7 +104,7 @@ class LoadProjectDialog extends Element {
 
 	async loadProject(projectFolderPath) {
 		try {
-			await pyCall(application.serverInstance.loadProject, projectFolderPath);
+			await application.serverInstance.load_project(projectFolderPath);
 			$('#loadModal').modal('hide');
 			await application.refresh();
 		}

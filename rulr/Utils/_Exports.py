@@ -4,7 +4,9 @@ import weakref
 import numpy as np
 
 BASIC_TYPES = [int, float, dict, list, str, bool]
-EXPORTABLE_PROPERTY_TYPES = BASIC_TYPES + [np.ndarray]
+CUSTOM_EXPORTS = [np.ndarray]
+
+EXPORTABLE_PROPERTY_TYPES = BASIC_TYPES + CUSTOM_EXPORTS
 
 exported_objects = {}
 
@@ -38,7 +40,7 @@ def export_object(instance):
 
 	# Check if we have an existing wrapping for this object
 	for key, value in exported_objects.items():
-		if value is instance:
+		if value() == instance:
 			object_id = key
 
 	# If no existing wrapping, create one
@@ -46,12 +48,14 @@ def export_object(instance):
 		object_id = len(exported_objects)
 		exported_objects[object_id] = weakref.ref(instance)
 
-	# Get callable methods (when we use export_method, we tag an attribute onto those methods - look for this)
-	attributes = dir(instance)
-	method_names = [att for att in attributes if hasattr(getattr(instance, att), "exported_method")]
+	# TODO : Each time the object is 'reexported' we rebuild the property and method names - let's reduce this
 
-	property_names = [att for att in attributes if type(getattr(instance, att)) in EXPORTABLE_PROPERTY_TYPES]
-	property_names = [x for x in property_names if x[0] != '_'] # Trim 'private' variables
+	# Get callable methods
+	attributes = dir(instance)
+	attributes = [x for x in attributes if x[0] != '_'] # Trim 'private' attributes
+
+	method_names = [att for att in attributes if callable(getattr(instance, att))]
+	property_names = [att for att in attributes if not att in method_names]
 
 	#TODO : just export everything automatically
 
@@ -65,27 +69,27 @@ def export_object(instance):
 		"property_names" : property_names
 	}
 
-#TODO : remove boiler plate from these 2 function wrappers
-def export_method(method):
-	'''Wrapper to handle returns and exceptions'''
+def to_basic_type(instance):
+	if isinstance(instance, np.ndarray):
+		return instance.tolist()
+	return str(instance)
 
-	def wrappedMethod(self, successCallback, successObjectCallback, exceptionCallback, *args):
-		global exported_objects
-		try:
-			result = method(self, *args)
-			basic_types = BASIC_TYPES
-			if type(result) in basic_types or result is None:
-				# return the value directly
-				successCallback.Call(result)
-			else:
-				# object is callable, needs wrapping
-				successObjectCallback.Call(export_object(result))
-				
-		except Exception as exception:		
-			exceptionCallback.Call(format_exception(exception))
+def set_from_advanced_type(instance, value):
+	if isinstance(instance, np.ndarray):
+		instance[:] = value
 
-	setattr(wrappedMethod, "exported_method", True)
-	return wrappedMethod
+def return_object(instance, success_callback, success_object_callback):
+	instance_type = type(instance)
+	if instance_type in BASIC_TYPES or instance is None:
+		# return the value directly
+		success_callback.Call(instance)
+	elif instance_type in CUSTOM_EXPORTS:
+		translated_instance = to_basic_type(instance)
+		success_callback.Call(translated_instance)
+	else:
+		# object is callable, needs wrapping
+		exported_object = export_object(instance)
+		success_object_callback.Call(exported_object)
 
 def call_exported_object_method(success_callback, success_object_callback, exception_callback, object_id, method_name, *args):
 	global exported_objects
@@ -95,12 +99,12 @@ def call_exported_object_method(success_callback, success_object_callback, excep
 		raise Exception("object_id {0} not found in exported_objects".format(object_id))
 	instance = exported_objects[object_id]()
 	method = getattr(instance, method_name)
-	method(success_callback, success_object_callback, exception_callback, *args)
-
-def to_basic_type(instance):
-	if isinstance(instance, np.ndarray):
-		return instance.tolist()
-	return str(instance)
+	try:
+		result = method(*args)
+		return_object(result, success_callback, success_object_callback)
+	except Exception as exception:		
+		exception_callback.Call(format_exception(exception))
+	
 
 def call_exported_object_property_get(success_callback, success_object_callback, exception_callback, object_id, property_name):
 	global exported_objects
@@ -110,15 +114,10 @@ def call_exported_object_property_get(success_callback, success_object_callback,
 			raise Exception("object_id {0} not found in exported_objects".format(object_id))
 		instance = exported_objects[object_id]()
 		property = getattr(instance, property_name)
-		if not type(property) in BASIC_TYPES:
-			property = to_basic_type(property)
-		success_callback.Call(property)
+		return_object(property, success_callback, success_object_callback)
+
 	except Exception as exception:
 		exception_callback.Call(format_exception(exception))
-
-def set_advanced_type(instance, value):
-	if isinstance(instance, np.ndarray):
-		instance[:] = value
 	
 def call_exported_object_property_set(success_callback, success_object_callback, exception_callback, object_id, property_name, value):
 	global exported_objects
@@ -128,10 +127,17 @@ def call_exported_object_property_set(success_callback, success_object_callback,
 			raise Exception("object_id {0} not found in exported_objects".format(object_id))
 		instance = exported_objects[object_id]()
 		property = getattr(instance, property_name)
-		if not type(property) in BASIC_TYPES:
-			set_advanced_type(property, value)
-		else:
+		
+		property_type = type(property)
+
+		if property_type in BASIC_TYPES:
 			setattr(instance, property_name, value)
+		elif property_type in CUSTOM_EXPORTS:
+			set_from_advanced_type(property, value)
+		else:
+			raise Exception("Cannot call set on property of type [{}]".format(str(property_type)))
+		
 		success_callback.Call(None)
+
 	except Exception as exception:
 		exception_callback.Call(format_exception(exception))

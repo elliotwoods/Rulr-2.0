@@ -82,7 +82,7 @@ export class Matrix extends Base {
 
 		this._table.empty();
 
-		for(var rowIndex = 0; rowIndex < rows; rowIndex++) {
+	for(var rowIndex = 0; rowIndex < rows; rowIndex++) {
 			let tableRow = $(`<tr class="rulr-widgets-matrix-table-row"></tr>`);
 			this._table.append(tableRow);
 

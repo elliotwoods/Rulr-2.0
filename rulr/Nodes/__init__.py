@@ -2,7 +2,7 @@ import importlib
 import queue
 
 from rulr.Utils.AutoGroup import AutoGroup
-from rulr.Utils import export_method, Viewable
+from rulr.Utils import Viewable
 
 from enum import Enum
 
@@ -24,7 +24,6 @@ class Header(Viewable):
 
 	def get_description(self):
 		return self.__dict__
-	getDescription = export_method(get_description)
 
 
 class Base(Viewable):
@@ -45,18 +44,6 @@ class Base(Viewable):
 
 	def serialise(self):
 		pass
-
-	@export_method
-	def getHeader(self):
-		return self.header
-	
-	@export_method
-	def getParameters(self):
-		return self.parameters
-
-	@export_method
-	def getComponents(self):
-		return self.components
 
 	def update(self):
 		# Perform all actions in the update_action_queue

@@ -9,7 +9,7 @@ export class Header extends Viewable {
 
 	async pullData() {
 		await super.pullData();
-		this.description = await this.serverInstance.getDescription();
+		this.description = await this.serverInstance.get_description();
 	}
 };
 
@@ -31,13 +31,13 @@ export class Base extends Viewable {
 
 		// TODO : this is a semi-manual way of importing objects - look into using fromServerInstance function in future to avoid any issues
 		this.header = new Header();
-		this.header.serverInstance = await this.serverInstance.getHeader();
+		this.header.serverInstance = await this.serverInstance.header.get();
 
 		this.parameters = new AutoGroup();
-		this.parameters.serverInstance = await this.serverInstance.getParameters();
+		this.parameters.serverInstance = await this.serverInstance.parameters.get();
 
 		this.components = new AutoGroup();
-		this.components.serverInstance = await this.serverInstance.getComponents();
+		this.components.serverInstance = await this.serverInstance.components.get();
 	}
 
 	async updateData() {

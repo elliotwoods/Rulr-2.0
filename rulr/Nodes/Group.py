@@ -1,5 +1,4 @@
 import rulr.Nodes
-from rulr.Utils import export_method
 
 class Node(rulr.Nodes.Base):
 	def __init__(self):
@@ -39,7 +38,6 @@ class Node(rulr.Nodes.Base):
 			if child.header.ID == childID:
 				return child
 		raise Exception("Node does not have child with ID={0}".format(childID))
-	getChildByID = export_method(get_child_by_ID)
 	
 	def get_child_by_path(self, nodePath):
 		if nodePath == []:
@@ -53,4 +51,3 @@ class Node(rulr.Nodes.Base):
 		for child in self.children:
 			childIDs.append(child.header.ID)
 		return childIDs
-	getChildIDs = export_method(get_child_IDs)

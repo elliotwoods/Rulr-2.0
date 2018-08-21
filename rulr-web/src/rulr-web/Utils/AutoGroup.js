@@ -46,7 +46,7 @@ export class AutoGroup extends Viewable {
 
 		var childNames = Object.keys(this.children);
 
-		var serverChildNames = await this.serverInstance.getChildNames();
+		var serverChildNames = await this.serverInstance.get_child_names();
 
 		//Remove invalidated children
 		//TODO : more resilient way to check for object consistency (e.g. object_id)
@@ -60,7 +60,7 @@ export class AutoGroup extends Viewable {
 		//Add any missing children
 		for (let serverChildName of serverChildNames) {
 			if (!(serverChildName in Object.keys(this.children))) {
-				var childServerInstance = await this.serverInstance.getChildByName(serverChildName);
+				var childServerInstance = await this.serverInstance.get_child_by_name(serverChildName);
 				var child = await fromServerInstance(childServerInstance);
 				this.children[serverChildName] = child;
 				this[serverChildName] = child;

@@ -7,15 +7,19 @@ export class ComponentCard extends Base {
 	constructor(component) {
 		super();
 		this.component = component;
-		this.component.parameters.widget.showDefaultTitle = false;
 
 		this.showDefaultTitle = false;
 		this.componentCard = null;
 	}
 
-	draw() {
-		super.draw();
-		
+	async init() {
+		super.init();
+		this.component.parameters.widget.showDefaultTitle = false;
+	}
+
+	firstDraw() {
+		super.firstDraw();
+
 		// Create the card
 		{
 			var nodeItemTemplateHTML = $("#Inspector-ComponentTemplate").first().html();

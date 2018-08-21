@@ -30,8 +30,8 @@ class Application {
 		}
 
 		// Check if the application is loaded
-		if (await pyCall(this.serverInstance.hasRootNode)) {
-			var nodeServerInstance = await pyCall(this.serverInstance.getNodeByPath, []);
+		if (await this.serverInstance.has_root_node()) {
+			var nodeServerInstance = await this.serverInstance.get_node_by_path([]);
 			this.rootNode = await fromServerInstance(nodeServerInstance);
 
 			// We must update before setting the selection (otherwise it won't be populated)
@@ -52,7 +52,7 @@ class Application {
 	}
 
 	async update() {
-		await pyCall(this.serverInstance.update);
+		await this.serverInstance.update();
 		if (this.rootNode != null) {
 			await this.rootNode.updateData();
 			await this.rootNode.updateView();

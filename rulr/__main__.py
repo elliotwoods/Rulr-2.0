@@ -7,7 +7,7 @@ from cefpython3 import cefpython as cef
 import sys
 import http.server
 import threading
-from rulr.Utils._Exports import export_method, call_exported_object_method, call_exported_object_property_get, call_exported_object_property_set
+from rulr.Utils._Exports import call_exported_object_method, call_exported_object_property_get, call_exported_object_property_set
 
 import rulr.Application
 
@@ -43,7 +43,7 @@ class ClientHandler():
 	def OnLoadingStateChange(self, browser, is_loading, **_):
 		if not is_loading:
 			bindings = cef.JavascriptBindings()
-			bindings.SetObject("serverApplication", rulr.Application.instance) # This is handled in the initialisation
+			bindings.SetFunction("get_application_export", rulr.Application.get_application_export)
 			bindings.SetFunction("callExportedObjectMethod", call_exported_object_method)
 			bindings.SetFunction("callExportedObjectPropertyGet", call_exported_object_property_get)
 			bindings.SetFunction("callExportedObjectPropertySet", call_exported_object_property_set)

@@ -27,7 +27,7 @@ class Node extends Base {
 		await super.pullData();
 
 		// Get list of children on server side
-		var serverChildIDs = await this.serverInstance.getChildIDs();
+		var serverChildIDs = await this.serverInstance.get_child_IDs();
 
 		//remove any children on client + not on server
 		this.children = this.children.filter(child => serverChildIDs.includes(child.header.description.ID));
@@ -39,7 +39,7 @@ class Node extends Base {
 		var currentChildrenByIDs = this.getChildrenByID();
 		for(let serverChildID of serverChildIDs) {
 			if(!(serverChildID in currentChildrenByIDs)) {
-				var serverChildInstance = await this.serverInstance.getChildByID(serverChildID);
+				var serverChildInstance = await this.serverInstance.get_child_by_ID(serverChildID);
 				var newClientChildInstance = await fromServerInstance(serverChildInstance);
 				this.children.push(newClientChildInstance);
 			}
