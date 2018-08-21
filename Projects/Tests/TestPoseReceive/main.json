@@ -23,7 +23,7 @@
 				}
 			},
 			{
-				"moduleName" : "ARKit.TestPoseReceive",
+				"moduleName" : "ARKit.TestPoseReceive2",
 				"header" : {
 					"name" : "TestPoseReceive",
 					"ID" : 3

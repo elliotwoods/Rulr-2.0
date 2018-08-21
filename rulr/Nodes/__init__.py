@@ -60,17 +60,16 @@ class Base(Viewable):
 
 	def update(self):
 		# Perform all actions in the update_action_queue
-		if not self.update_action_queue.empty():
-			while True:
+		while not self.update_action_queue.empty():
+			try:
+				action = self.update_action_queue.get(False)
 				try:
-					action = self.update_action_queue.get(False)
-					try:
-						action()
-						self.update_action_queue.task_done()
-					except Exception as e:
-						self.frame_exception_queue.put(e)
-				except:
-					break
+					action()
+					self.update_action_queue.task_done()
+				except Exception as e:
+					self.frame_exception_queue.put(e)
+			except:
+				break
 	
 	def get_module_name(self):
 		longName = self.__class__.__module__

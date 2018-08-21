@@ -16,6 +16,6 @@ export class Base extends Viewable {
 
 	async updateData() {
 		await super.updateData();
-		this.parameters.update();
+		this.parameters.updateData();
 	}
 }

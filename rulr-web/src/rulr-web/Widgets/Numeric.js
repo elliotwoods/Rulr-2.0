@@ -78,6 +78,8 @@ export class Numeric extends Base {
 			})
 			this.textEntry.focusout(closeTextEntry);
 		}
+
+		this.drawnDigitHeight = -1;
 	}
 
 	draw() {

@@ -50,7 +50,7 @@ export class Base {
 	}
 
 	firstDraw() {
-		
+		this.content.empty();
 	}
 
 	draw() {

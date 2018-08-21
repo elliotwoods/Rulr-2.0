@@ -27,6 +27,8 @@ export class ComponentCard extends Base {
 		{
 			this.componentCard.find('#inspector-card-name').html(Utils.camelCapsToSentanceCaps(this.caption));
 			var innerList = this.componentCard.find('#inspector-card-content');
+
+			//Add the parameter widgets to the list
 			this.component.parameters.widget.appendTo(innerList);
 
 			let toolBar = this.componentCard.find('#toolBar');
