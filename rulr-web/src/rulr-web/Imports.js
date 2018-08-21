@@ -4,6 +4,21 @@ export var callExportedObjectMethod = null;
 export var callExportedObjectPropertyGet = null;
 export var callExportedObjectPropertySet = null;
 
+export class Property {
+	constructor(objectID, propertyName) {
+		this.objectID = objectID;
+		this.propertyName = propertyName;
+	}
+
+	async get() {
+		return await pyCall(callExportedObjectPropertyGet, this.objectID, this.propertyName);
+	}
+
+	async set(value) {
+		return await pyCall(callExportedObjectPropertySet, this.objectID, this.propertyName, value);
+	}
+}
+
 export async function pyCall(action, ...args) {
 	return new Promise((resolve, reject) => {
 		var successCallback = (returnValue) => {
@@ -21,12 +36,7 @@ export async function pyCall(action, ...args) {
 			}
 
 			for(let propertyName of returnObjectDescription.property_names) {
-				result[propertyName + "_get"] = async () => {
-					return await pyCall(callExportedObjectPropertyGet, result.objectID, propertyName);
-				};
-				result[propertyName + "_set"] = async (value) => {
-					return await pyCall(callExportedObjectPropertySet, result.objectID, propertyName, value);
-				};
+				result[propertyName] = new Property(result.objectID, propertyName);
 			}
 
 			resolve(result);
@@ -58,12 +68,21 @@ async function ensureFreshModule(modulePath) {
 	// For each session, ensure a hard reload
 	if (!loadedModulePaths.includes(modulePath)) {
 		var absolutePath = '/rulr-web/src/rulr-web/' + modulePath.substring(2);
-		var response = await $.ajax({
-			url: absolutePath,
-			processData: false,
-			cache: false,
-			dataType: 'text'
-		});
+
+		try {
+			var response = await $.ajax({
+				url: absolutePath,
+				processData: false,
+				cache: false,
+				dataType: 'text'
+			});
+		}
+		catch(exception) {
+			var error = new Error(`Failed to load module : ${exception.statusText} for ${modulePath}`);
+			error.innerException = exception;
+			throw(error);
+		}
+		
 		loadedModulePaths.push(modulePath);
 	}
 }
@@ -74,7 +93,7 @@ async function fromCreationDescriptionAsync(creationDescription) {
 	await ensureFreshModule(modulePath);
 
 	var module = await import(modulePath);
-	var newInstance = eval(`new module.${creationDescription.class}()`);
+	var newInstance = new module[creationDescription.class]();
 
 	// Setup Viewable characteristics
 	{
@@ -88,6 +107,14 @@ async function fromCreationDescriptionAsync(creationDescription) {
 export async function fromServerInstance(serverInstance) {
 	var creationDescription = serverInstance.creationDescription;
 	var newInstance = await fromCreationDescriptionAsync(creationDescription);
+
+	// We don't set this in the constructor, since:
+	//	* We'd need to pass the constructor arguments everywhere (easy to forget)
+	//	* We can't perform any async operations in the constructor
+
 	newInstance.serverInstance = serverInstance;
+
+	await newInstance.init();
+
 	return newInstance;
 }

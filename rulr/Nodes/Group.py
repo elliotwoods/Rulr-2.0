@@ -5,6 +5,11 @@ class Node(rulr.Nodes.Base):
 	def __init__(self):
 		super().__init__()
 		self.children = []
+
+	def update(self):
+		super().update()
+		for child in self.children:
+			child.update()
 	
 	def get_next_available_child_ID(self):
 		if len(self.children) == 0:
@@ -49,14 +54,3 @@ class Node(rulr.Nodes.Base):
 			childIDs.append(child.header.ID)
 		return childIDs
 	getChildIDs = export_method(get_child_IDs)
-
-	def get_view_description_content(self, view_description_arguments):
-		description = super().get_view_description_content(view_description_arguments)
-
-		# Children
-		if view_description_arguments.recursive:
-			description["children"] = []
-			for child in self.children:
-				description["children"].append(child.get_view_description(view_description_arguments))
-
-		return description

@@ -9,16 +9,15 @@ class ViewDescriptionArguments:
 			self.recursive = request['recursive']
 
 class Viewable(ABC):
-	@abstractmethod
-	def get_view_description_content(self, viewDescriptionArguments):
-		return {}
+	def __init__(self):
+		self.commit_index = 0
+		self.commit()
 
-	def get_view_description(self, view_description_arguments):
-		if(not isinstance(view_description_arguments, ViewDescriptionArguments)):
-			view_description_arguments = ViewDescriptionArguments(view_description_arguments)
+	def commit(self):
+		"""Announce that a variable has been edited on the server side"""
+		self.commit_index += 1
+		pass
 
-		description = self.get_creation_description()
-		description["content"] = self.get_view_description_content(view_description_arguments)
-		return description
-	getViewDescription = export_method(get_view_description)
-
+	def update(self):
+		pass
+	

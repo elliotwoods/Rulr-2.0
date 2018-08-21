@@ -1,12 +1,15 @@
 import importlib
+import queue
+
 from rulr.Utils.AutoGroup import AutoGroup
 from rulr.Utils import export_method, Viewable
 
 from enum import Enum
 
 
-class Header:
+class Header(Viewable):
 	def __init__(self):
+		super().__init__()
 		self.ID = 0
 		self.name = ""
 		self.visible = True
@@ -26,11 +29,16 @@ class Header:
 
 class Base(Viewable):
 	def __init__(self):
+		super().__init__()
+
 		self.header = Header()
 		self.header.name = self.get_module_name()
 
 		self.parameters = AutoGroup()
 		self.components = AutoGroup()
+
+		self.update_action_queue = queue.Queue()
+		self.frame_exception_queue = queue.Queue()
 
 	def deserialize(self, description):
 		pass
@@ -49,19 +57,21 @@ class Base(Viewable):
 	@export_method
 	def getComponents(self):
 		return self.components
+
+	def update(self):
+		# Perform all actions in the update_action_queue
+		if not self.update_action_queue.empty():
+			while True:
+				try:
+					action = self.update_action_queue.get(False)
+					try:
+						action()
+						self.update_action_queue.task_done()
+					except Exception as e:
+						self.frame_exception_queue.put(e)
+				except:
+					break
 	
-	def get_view_description_content(self, view_description_arguments):
-		# Header
-		description = {
-			"header" : self.header.__dict__
-		}
-
-		# Content
-		description["parameters"] = self.parameters.get_view_description(view_description_arguments)
-		description["components"] = self.components.get_view_description(view_description_arguments)
-
-		return description
-
 	def get_module_name(self):
 		longName = self.__class__.__module__
 		shortName = longName[len("rulr.Nodes."):]

@@ -111,6 +111,11 @@ rulr-widgets-scrollcontainer {
 	padding-left: 0px;
 }
 
+.rulr-widgets-matrix-container {
+	overflow: scroll;
+	width: 100%;
+}
+
 .rulr-widgets-matrix-table {
 	border: none;
 }
@@ -122,6 +127,7 @@ rulr-widgets-scrollcontainer {
 .rulr-widgets-matrix-table-cell {
 	font-family: 'Courier New', Courier, monospace;
 	text-align: right;
+	white-space: nowrap;
 }
 
 .rulr-widgets-matrix-table-cellcontent {

@@ -39,7 +39,6 @@ def start_falcon():
 def browser_on_after_created(browser, **_):
 	pass
 
-
 class ClientHandler():
 	def OnLoadingStateChange(self, browser, is_loading, **_):
 		if not is_loading:

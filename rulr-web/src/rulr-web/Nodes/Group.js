@@ -23,8 +23,8 @@ class Node extends Base {
 		}
 	}
 
-	async refreshData() {
-		await super.refreshData();
+	async pullData() {
+		await super.pullData();
 
 		// Get list of children on server side
 		var serverChildIDs = await this.serverInstance.getChildIDs();

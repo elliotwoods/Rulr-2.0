@@ -5,14 +5,16 @@ export class Numeric extends Base {
 		super();
 		this.getFunction = getFunction;
 		this.setFunction = setFunction;
-		this.needsDigitRedraw = false;
 
 		this.digits = null;
 		this.textEntry = null;
 
 		this.digitDivs = new Object();
+		this.drawnDigitHeight = -1;
 
 		this._defaultHighDigitCount = 1;
+		
+		this.valueCache = null;
 
 		this.decimalPlaces = 3;
 		this.highDigitCount = this._defaultHighDigitCount;
@@ -20,127 +22,36 @@ export class Numeric extends Base {
 
 	update() {
 		super.update();
-		if (this.needsDigitRedraw) {
-			//check if digit count changed
-			{
-				var value = this.getFunction();
-				if(value != value) {
-					return;
-				}
-				
-				var height = Math.log(Math.abs(value)) / Math.log(10);
-				height = Math.floor(height) + 1;
-				var desiredHeight = Math.max(height, this._defaultHighDigitCount);
-				if (this.highDigitCount != desiredHeight) {
-					this.highDigitCount = desiredHeight;
+
+		{
+			var value = this.getFunction();
+			if(value != this.valueCache) {
+				// Don't draw NaN
+				if(value == value) {
+					this.valueCache = value;
 					this.needsRedraw = true;
 				}
-				else {
-					//if not, then just redraw the digits
-					this.redrawDigits();
-				}
+				
 			}
 		}
 	}
 
 	firstDraw() {
+		super.firstDraw();
+
 		if (this._title != null) {
 			this._title.addClass('rulr-widget-title-left');
 		}
+
 		this.content.addClass('rulr-widget-content-right');
-	}
 
-	draw() {
-		super.draw();
-		var value = this.getFunction();
-
-		// digits
-		{
-			this.digits = $('<span></span>');
-			this.digitDivs = new Object();
-			this.content.append(this.digits);
-
-			{
-				let digitElement = $(`<span class="rulr-widget-numeric-sign">&nbsp;</a>`);
-				this.digits.append(digitElement);
-				this.digitDivs["sign"] = digitElement;
-			}
-
-			for (var exp = this.highDigitCount; exp >= -this.decimalPlaces; exp--) {
-				let numberScale = Math.pow(10, exp);
-
-
-				let digitElement = $(`<a href="#" class="rulr-link-unstyle rulr-widget-numeric-digit">&nbsp;</a>`);
-				this.digits.append(digitElement);
-				this.digitDivs[exp.toString()] = digitElement;
-
-				let isDragging = false;
-				let mouseY = 0;
-				let sumDelta = 0;
-				let mouseMoved = false;
-
-				let mouseDownListener = (event) => {
-					// Don't perform a normal drag
-					event.preventDefault();
-
-					// Add listeners to mouse actions
-					document.addEventListener("mousemove", mouseMoveListener);
-					document.addEventListener("mouseup", mouseUpListener);
-
-					mouseY = event.clientY;
-					mouseMoved = false;
-
-					digitElement.addClass('rulr-widget-numeric-digit-selected');
-				};
-				let mouseMoveListener = (event) => {
-					var delta = event.clientY - mouseY;
-					const pxPerStep = 4;
-					delta /= pxPerStep;
-					if (Math.abs(delta) > 1) {
-						mouseMoved = true;
-
-						var digitDelta = Math.floor(Math.abs(delta)) * Math.sign(delta);
-						mouseY += digitDelta * pxPerStep;
-
-						//calculate new value
-						var newValue = this.getFunction();
-						newValue -= digitDelta * numberScale;
-						newValue = round(newValue, this.decimalPlaces);
-						this.setFunction(newValue);
-
-						//flag for redraw digits on next update
-						this.needsDigitRedraw = true;
-					}
-				};
-				let mouseUpListener = (event) => {
-					document.removeEventListener("mousemove", mouseMoveListener);
-					document.removeEventListener("mouseup", mouseUpListener);
-
-					digitElement.removeClass('rulr-widget-numeric-digit-selected');
-
-					if (!mouseMoved) {
-						this.digits.hide();
-						this.textEntry.show();
-						this.textEntry.val(this.getFunction().toString());
-						this.textEntry.select();
-					}
-				};
-
-				//this also attaches the other listeners
-				digitElement.mousedown(mouseDownListener);
-
-				// Add the decimal point after the single digits
-				if (exp == 0) {
-					this.digits.append($(`<span class="rulr-widget-numeric-decimalpoint">&bull;</span>`));
-				}
-			}
-
-			this.needsDigitRedraw = true;
-		}
+		this.digits = $('<span></span>');
+		this.digitDivs = new Object();
+		this.content.append(this.digits);
 
 		// text entry
 		{
-			this.textEntry = $(`<input class="form-control form-control-sm" placeholder="${value}"/>`)
+			this.textEntry = $(`<input class="form-control form-control-sm" placeholder=""/>`)
 			this.content.append(this.textEntry);
 			this.textEntry.hide();
 
@@ -152,7 +63,7 @@ export class Numeric extends Base {
 					// Avoid NaN
 					if (textEntryValue == textEntryValue) {
 						this.setFunction(textEntryValue);
-						this.needsDigitRedraw = true;
+						this.needsRedraw = true;
 					}
 				}
 				this.textEntry.hide();
@@ -169,21 +80,112 @@ export class Numeric extends Base {
 		}
 	}
 
+	draw() {
+		super.draw();
+
+		// rebuild digits
+		{
+			var height = Math.log(Math.abs(this.valueCache)) / Math.log(10);
+			height = Math.floor(height) + 1;
+			var digitHeightToDraw = Math.max(height, this._defaultHighDigitCount);
+			if (this.drawnDigitHeight != digitHeightToDraw) {
+				this.rebuildDigits(digitHeightToDraw);
+			}
+		}
+
+		// set digit values
+		this.redrawDigits();
+	}
+
+	rebuildDigits(digitHeightToDraw) {
+		this.digits.empty();
+
+		let digitElement = $(`<span class="rulr-widget-numeric-sign">&nbsp;</a>`);
+		this.digits.append(digitElement);
+		this.digitDivs["sign"] = digitElement;
+
+		for (var exp = digitHeightToDraw; exp >= -this.decimalPlaces; exp--) {
+			let numberScale = Math.pow(10, exp);
+
+			let digitElement = $(`<a href="#" class="rulr-link-unstyle rulr-widget-numeric-digit">&nbsp;</a>`);
+			this.digits.append(digitElement);
+			this.digitDivs[exp.toString()] = digitElement;
+
+			let isDragging = false;
+			let mouseY = 0;
+			let sumDelta = 0;
+			let mouseMoved = false;
+
+			let mouseDownListener = (event) => {
+				// Don't perform a normal drag
+				event.preventDefault();
+
+				// Add listeners to mouse actions
+				document.addEventListener("mousemove", mouseMoveListener);
+				document.addEventListener("mouseup", mouseUpListener);
+
+				mouseY = event.clientY;
+				mouseMoved = false;
+
+				digitElement.addClass('rulr-widget-numeric-digit-selected');
+			};
+			let mouseMoveListener = (event) => {
+				var delta = event.clientY - mouseY;
+				const pxPerStep = 4;
+				delta /= pxPerStep;
+				if (Math.abs(delta) > 1) {
+					mouseMoved = true;
+
+					var digitDelta = Math.floor(Math.abs(delta)) * Math.sign(delta);
+					mouseY += digitDelta * pxPerStep;
+
+					//calculate new value
+					var newValue = this.getFunction();
+					newValue -= digitDelta * numberScale;
+					newValue = round(newValue, this.decimalPlaces);
+					this.setFunction(newValue);
+				}
+			};
+			let mouseUpListener = (event) => {
+				document.removeEventListener("mousemove", mouseMoveListener);
+				document.removeEventListener("mouseup", mouseUpListener);
+
+				digitElement.removeClass('rulr-widget-numeric-digit-selected');
+
+				if (!mouseMoved) {
+					this.digits.hide();
+					this.textEntry.show();
+					this.textEntry.val(this.getFunction().toString());
+					this.textEntry.select();
+				}
+			};
+
+			//this also attaches the other listeners
+			digitElement.mousedown(mouseDownListener);
+
+			// Add the decimal point after the single digits
+			if (exp == 0) {
+				this.digits.append($(`<span class="rulr-widget-numeric-decimalpoint">&bull;</span>`));
+			}
+		}
+
+		this.drawnDigitHeight = digitHeightToDraw;
+	}
+
 	redrawDigits() {
 		var keys = Object.keys(this.digitDivs);
-		var value = this.getFunction();
 
-		var valueString = Math.abs(value).toFixed(this.decimalPlaces);
+		var valueString = Math.abs(this.valueCache).toFixed(this.decimalPlaces);
 		var reverseValueString = valueString.split("").reverse().join("");
 
 		for (var key of keys) {
 			var div = this.digitDivs[key];
 
 			if (key == "sign") {
-				if(value > 0) {
+				if(this.valueCache > 0) {
 					div.html('+');
 				}
-				else if(value == 0) {
+				else if(this.valueCache == 0) {
 					div.html('&nbsp;');
 				}
 				else {
@@ -196,14 +198,14 @@ export class Numeric extends Base {
 				var digit = getDigitFromValueString(reverseValueString, exponent, this.decimalPlaces);
 				div.html(digit);
 
-				if (value < 0) {
+				if (this.valueCache < 0) {
 					div.addClass('rulr-widget-digit-negative');
 				}
 				else {
 					div.removeClass('rulr-widget-digit-negative');
 				}
 
-				if (Math.abs(value) < Math.pow(10, exponent)) {
+				if (Math.abs(this.valueCache) < Math.pow(10, exponent)) {
 					div.addClass('rulr-widget-digit-greyed');
 					div.removeClass('rulr-widget-digit-negative');
 				}
@@ -212,7 +214,6 @@ export class Numeric extends Base {
 				}
 			}
 		}
-		this.needsDigitRedraw = false;
 	}
 }
 

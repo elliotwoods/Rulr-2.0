@@ -2,7 +2,8 @@
 	"python.pythonPath": "C:\\Users\\kimchips\\Anaconda3\\envs\\Rulr\\python.exe",
 	"editor.insertSpaces": false,
 	"files.exclude": {
-		"**/rulr-web": false
+		"**/blob_storage": true,
+		"**/node_modules" : true
 	},
 	"python.jediEnabled": false
 }

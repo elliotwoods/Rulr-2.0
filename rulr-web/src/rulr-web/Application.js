@@ -15,13 +15,13 @@ class Application {
 		try {
 			this.serverInstance = serverApplication;
 			await this.refresh();
+
+			// start the regular update
+			regularUpdate();
 		}
 		catch (exception) {
 			showException(exception);
 		}
-
-		// start the regular update
-		regularUpdate();
 	}
 
 	async refresh() {
@@ -52,6 +52,7 @@ class Application {
 	}
 
 	async update() {
+		await pyCall(this.serverInstance.update);
 		if (this.rootNode != null) {
 			await this.rootNode.updateData();
 			await this.rootNode.updateView();
@@ -65,6 +66,11 @@ class Application {
 
 	getSelection() {
 		return this.selection;
+	}
+
+	selectNode(nodeInstance) {
+		this.selection = nodeInstance;
+		this.window.inspector.needsRefresh = true;
 	}
 }
 
@@ -92,9 +98,9 @@ function getVisibleNodeAndChildren(node) {
 
 var application = new Application();
 
+let applicationLockUpdate = false;
 function regularUpdate() {
-	requestAnimationFrame(regularUpdate);
-	application.update();
+	application.update().then(regularUpdate);
 }
 
 export { application };

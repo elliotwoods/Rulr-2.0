@@ -3,3 +3,4 @@ node_modules
 **.egg-info
 build-js
 .vs
+error.log

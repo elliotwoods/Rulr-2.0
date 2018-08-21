@@ -1,0 +1,37 @@
+{
+	"moduleName" : "Group",
+	"name" : "Root Group",
+	"ID" : 0,
+	"content" : {
+		"children" : [
+			{
+				"moduleName" : "Helpers.Axis",
+				"header" : {
+					"name" : "Axis",
+					"ID" : 0
+				},
+				"content" : {
+				}
+			},
+			{
+				"moduleName" : "Helpers.Grid",
+				"header" : {
+					"name" : "Grid",
+					"ID" : 1
+				},
+				"content" : {
+				}
+			},
+			{
+				"moduleName" : "ARKit.TestPoseReceive",
+				"header" : {
+					"name" : "TestPoseReceive",
+					"ID" : 3
+				},
+				"content" : {
+
+				}
+			}
+		]
+	}
+}

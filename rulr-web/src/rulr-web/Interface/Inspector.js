@@ -15,7 +15,14 @@ class Inspector extends Element {
 		});
 	}
 
-	refresh() {
+	async update() {
+		await super.update();
+		await this.groupWidget.update();
+	}
+
+	async refresh() {
+		await super.refresh();
+		
 		this.childWidgets = [];
 
 		var nodeSelection = application.getSelection();
@@ -35,13 +42,10 @@ class Inspector extends Element {
 			
 			this.childWidgets.push(nodeSelection.components.widget);
 			this.childWidgets.push(nodeSelection.parameters.widget);
+			
 			this.groupWidget.caption = nodeSelection.header.name
 			this.groupWidget.needsRedraw = true;
 		}
-	}
-
-	update() {
-		this.groupWidget.update();
 	}
 }
 

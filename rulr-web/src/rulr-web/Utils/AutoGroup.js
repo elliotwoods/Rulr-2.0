@@ -11,9 +11,6 @@ export class AutoGroup extends Viewable {
 
 		// Create the widget
 		this.widget = new Group(() => this.childWidgets);
-
-		// The widget will watch for changes in this Viewable, and redraw whenever we announce a change
-		this.widget.watchViewables.push(this);
 	}
 
 	getChildKeys() {
@@ -44,8 +41,8 @@ export class AutoGroup extends Viewable {
 		}
 	}
 
-	async refreshData() {
-		await super.refreshData();
+	async pullData() {
+		await super.pullData();
 
 		var childNames = Object.keys(this.children);
 
@@ -56,6 +53,7 @@ export class AutoGroup extends Viewable {
 		for (let childName of childNames) {
 			if (!(childName in serverChildNames)) {
 				delete this.children[childName];
+				delete this[childName];
 			}
 		}
 
@@ -65,6 +63,7 @@ export class AutoGroup extends Viewable {
 				var childServerInstance = await this.serverInstance.getChildByName(serverChildName);
 				var child = await fromServerInstance(childServerInstance);
 				this.children[serverChildName] = child;
+				this[serverChildName] = child;
 			}
 		}
 	}

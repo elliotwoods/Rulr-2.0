@@ -1,11 +1,11 @@
 import { Base } from '../Base.js'
 
 class Node extends Base {
-	constructor() {
-		super();
+	async init() {
+		await super.init();
 
-		this.parameters.onDataReadyListeners.push(() => {
-			this.parameters.children.Size.onChangeListeners.push(() => {
+		this.parameters.onFirstDataReady.addListener(() => {
+			this.parameters.children.Size.onChange.addListener(() => {
 				this.needsViewportUpdate = true;
 			});
 		});
@@ -16,8 +16,9 @@ class Node extends Base {
 
 	async viewportUpdate() {
 		await super.viewportUpdate();
-		var scale = await this.parameters.children.Size.serverInstance.value_get();
+		var scale = await this.parameters.children.Size.value;
 		this.axes.scale.set(scale, scale, scale);
+		this.axes.visible = scale != 0.0;
 	}
 }
 

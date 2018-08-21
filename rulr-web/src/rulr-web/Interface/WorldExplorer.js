@@ -7,7 +7,7 @@ class WorldExplorer extends Element {
 		super();
 	}
 
-	refresh() {
+	async refresh() {
 		var listDiv = $("#WorldExplorer-list");
 		listDiv.empty();
 
@@ -31,8 +31,11 @@ class WorldExplorer extends Element {
 				newEntry.mouseenter(() => {
 					toolBar.show();
 				});
-				newEntry.mouseleave(function(event) {
+				newEntry.mouseleave((event) => {
 					toolBar.hide();
+				});
+				newEntry.click(() => {
+					application.selectNode(childNode);
 				});
 			});
 		}

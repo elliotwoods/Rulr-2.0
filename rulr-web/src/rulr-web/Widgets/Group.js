@@ -5,17 +5,23 @@ export class Group extends Base {
 	constructor(getWidgets) {
 		super();
 		this.getWidgets = getWidgets;
+		this.listElement = null;
+	}
+
+	firstDraw() {
+		super.firstDraw();
+		this.listElement = $('<ul class="list-group"></ul>');
+		this.content.append(this.listElement);
 	}
 
 	draw() {
 		super.draw();
 		var widgets = this.getWidgets();
 		
-		var list = $('<ul class="list-group"></ul>');
-		this.content.append(list);
+		this.listElement.empty();
 
 		for(var widget of widgets) {
-			widget.appendTo(list);
+			widget.appendTo(this.listElement);
 		}
 	}
 

@@ -14,6 +14,8 @@ class LoadProjectDialog extends Element {
 	}
 
 	async refresh(folderPath) {
+		await super.refresh();
+		
 		var projectList = await pyCall(application.serverInstance.listProjects, folderPath);
 		
 		// breadcrumbs

@@ -11,6 +11,11 @@ class Application(object):
 	def __init__(self):
 		self.rootNode = None
 
+	def _update(self):
+		if self.has_root_node():
+			self.rootNode.update()
+	update = export_method(_update)
+
 	def load_project(self, projectFolderPath):
 		absoluteProjectPath = os.path.normpath(os.path.join(SAVE_FOLDER, projectFolderPath))
 		print("Loading patch from {0}".format(absoluteProjectPath))

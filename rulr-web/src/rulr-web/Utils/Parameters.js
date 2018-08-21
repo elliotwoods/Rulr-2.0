@@ -2,37 +2,23 @@ import { Group } from '../Widgets/Group.js'
 import { Numeric } from '../Widgets/Numeric.js'
 import * as MatrixWidget from '../Widgets/Matrix.js'
 
-import { Viewable } from '../Utils/Viewable.js'
+import { Viewable } from './Viewable.js'
+import { LiquidEvent } from './LiquidEvent.js'
 
 export class Base extends Viewable {
 	constructor() {
 		super();
 		this.value = null;
-		this.onChangeListeners = [];
-		this.needsPullValue = true; // TODO : Currently this only ever happens once
-		this.needsPushValue = false;
 	}
 
-	async updateData() {
-		if(this.needsPullValue) {
-			this.value = await this.serverInstance.value_get();
-			this.needsPullValue = false;
-			this.needsGuiUpdate = true;
-		}
-
-		if(this.needsPushValue) {
-			await this.serverInstance.value_set(this.value);
-			this.needsPushValue = false;
-		}
-
-		await super.updateData();
+	async pullData() {
+		await super.pullData();
+		this.value = await this.serverInstance.value.get();
 	}
 
-	onChange() {
-		for(let listener of this.onChangeListeners) {
-			listener();
-		}
-		this.needsPushValue = true;
+	async pushData() {
+		await super.pushData();
+		await this.serverInstance.value.set(this.value);
 	}
 }
 
@@ -45,7 +31,7 @@ export class Float extends Base {
 			return this.value;
 		}, (value) => {
 			this.value = value;
-			this.onChange();	
+			this.commit();
 		});
 	}
 }
@@ -71,7 +57,7 @@ export class Vector extends Base {
 				return this.value[index];
 			}, (value) => {
 				this.value[index] = value
-				this.onChange();	
+				this.commit();	
 			});
 			childWidget.caption = i.toString();
 			childWidget.needsRedraw = true;
@@ -104,7 +90,11 @@ export class Matrix extends Base {
 			return this.value;
 		}, (newValue) => {
 			this.value = newValue;
-			this.onChange();
+			this.commit();
 		});
+
+		this.onChange.addListener(() => {
+			this.widget.needsRedraw = true;
+		})
 	}
 }
