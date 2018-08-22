@@ -1,6 +1,8 @@
 import rulr.Nodes
 
 class Node(rulr.Nodes.Base):
+	"""A group of nodes"""
+
 	def __init__(self):
 		super().__init__()
 		self.children = []

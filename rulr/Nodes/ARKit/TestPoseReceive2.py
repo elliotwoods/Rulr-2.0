@@ -1,6 +1,7 @@
 import rulr.Nodes
 import rulr.Components.RigidBody
 import rulr.Components.View
+from rulr.Utils.Parameters import Image
 
 import falcon
 from wsgiref import simple_server
@@ -9,6 +10,10 @@ import json
 import atexit
 import socket
 import threading
+import base64
+import cv2
+
+import numpy as np
 
 SERVER_PORT = 8000 + 0
 
@@ -26,24 +31,15 @@ def try_port(port):
 
 
 class Node(rulr.Nodes.Base):
+	"""Receive data from ARKIt PoseSender"""
+	
 	def __init__(self):
 		super().__init__()
 
-		self.components.RigidBody = rulr.Components.RigidBody.Component()
-		self.components.View = rulr.Components.View.Component(self.components.RigidBody)
+		self.components.rigid_body = rulr.Components.RigidBody.Component()
+		self.components.view = rulr.Components.View.Component(self.components.rigid_body)
 
-		self.parameters.CameraMatrix = rulr.Utils.Parameters.Matrix([
-			[1920, 0, 960],
-			[0, 1920, 540],
-			[0, 0, 1]
-		])
-
-		self.parameters.Transform = rulr.Utils.Parameters.Matrix([
-			[1, 0, 0, 0],
-			[0, 1, 0, 1],
-			[0, 0, 1, 0],
-			[0, 0, 0, 1]
-		])
+		self.parameters.image = Image()
 
 		# Open the web server
 		self.falcon_API = falcon.API()
@@ -80,10 +76,25 @@ class Node(rulr.Nodes.Base):
 		self.update_action_queue.put(lambda: self.process_incoming(content))
 	
 	def process_incoming(self, content):
-		self.parameters.Transform.value.flat = content['transform']
-		self.parameters.Transform.value = self.parameters.Transform.value.transpose()
-		self.parameters.Transform.commit()
+		transform_matrix = np.ndarray([4,4], dtype=float)
+		transform_matrix.flat = content['transform']
+		transform_matrix = transform_matrix.transpose()
+		self.components.rigid_body.parameters.transform.set(transform_matrix)
+		self.components.rigid_body.parameters.transform.commit()
 
-		self.parameters.CameraMatrix.value.flat = content['intrinsics']
-		self.parameters.CameraMatrix.value = self.parameters.CameraMatrix.value.transpose()
-		self.parameters.CameraMatrix.commit()
+		# Set the resolution before the camera_matrix (since camera_matrix interacts with normalized_camera_matrix via resolution)
+		image_binary = base64.b64decode(content['image'])
+		image_binary_np = np.fromstring(image_binary, np.uint8)
+		image = cv2.imdecode(image_binary_np, cv2.IMREAD_COLOR)
+		
+		self.parameters.image.set(image)
+		self.parameters.image.commit()
+
+		self.components.view.parameters.resolution.set([image.shape[1], image.shape[0]])
+		self.components.view.parameters.resolution.commit()
+
+		camera_matrix = np.ndarray([3,3], dtype=float)
+		camera_matrix.flat = content['intrinsics']
+		camera_matrix = camera_matrix.transpose()
+		self.components.view.parameters.camera_matrix.set(camera_matrix)
+		self.components.view.parameters.camera_matrix.commit()

@@ -11,6 +11,7 @@ export class Base extends Viewable {
 		this.parameters = null;
 
 		this.widget = new ComponentCard(this);
+		this.viewportObject = new THREE.Object3D();
 	}
 
 	async init() {

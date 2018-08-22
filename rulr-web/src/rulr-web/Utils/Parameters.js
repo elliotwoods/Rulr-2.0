@@ -1,6 +1,7 @@
 import { Group } from '../Widgets/Group.js'
 import { Numeric } from '../Widgets/Numeric.js'
 import * as MatrixWidget from '../Widgets/Matrix.js'
+import * as ImageWidget from '../Widgets/Image.js'
 
 import { Viewable } from './Viewable.js'
 import { LiquidEvent } from './LiquidEvent.js'
@@ -13,12 +14,12 @@ export class Base extends Viewable {
 
 	async pullData() {
 		await super.pullData();
-		this.value = await this.serverInstance.value.get();
+		this.value = await this.serverInstance.get_client_formatted();
 	}
 
 	async pushData() {
 		await super.pushData();
-		await this.serverInstance.value.set(this.value);
+		await this.serverInstance.set(this.value);
 	}
 }
 
@@ -81,6 +82,12 @@ export class BoundVector extends Vector {
 	}
 }
 
+function flatten(arr) {
+	return arr.reduce(function (flat, toFlatten) {
+		return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+	}, []);
+}
+
 export class Matrix extends Base {
 	constructor() {
 		super();
@@ -91,6 +98,29 @@ export class Matrix extends Base {
 		}, (newValue) => {
 			this.value = newValue;
 			this.commit();
+		});
+
+		this.onChange.addListener(() => {
+			this.widget.needsRedraw = true;
+		})
+	}
+
+	getValueFlat() {
+		return flatten(this.value);
+	}
+
+	populateTHREEMatrix(threeMatrix) {
+		threeMatrix.fromArray(this.getValueFlat());
+		threeMatrix.transpose();
+	}
+}
+
+export class Image extends Base {
+	constructor() {
+		super();
+
+		this.widget = new ImageWidget.Widget(() => {
+			return this.value;
 		});
 
 		this.onChange.addListener(() => {

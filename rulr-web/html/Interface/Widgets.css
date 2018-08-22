@@ -41,7 +41,7 @@ rulr-widgets-scrollcontainer {
 .rulr-widget-numeric-digit {
 	font-family: 'Courier New', Courier, monospace;
 	border: 1px solid #eee;
-	font-size: 14px;
+	font-size: 13px;
 	margin: 0.2em;
 	padding: 0px;
 	text-align: center;
@@ -167,4 +167,9 @@ td.rulr-widgets-matrix-table-cell {
 	float: right;
 	margin-top: 8px;
 	margin-left: 10px;
+}
+
+.rulr-widgets-image-img {
+	border: none;
+	width: 100%;
 }

@@ -26,6 +26,8 @@ def try_port(port):
 
 
 class Node(rulr.Nodes.Base):
+	"""Receive data from ARKIt PoseSender"""
+	
 	def __init__(self):
 		super().__init__()
 

@@ -113,8 +113,8 @@ def call_exported_object_property_get(success_callback, success_object_callback,
 		if not object_id in exported_objects:
 			raise Exception("object_id {0} not found in exported_objects".format(object_id))
 		instance = exported_objects[object_id]()
-		property = getattr(instance, property_name)
-		return_object(property, success_callback, success_object_callback)
+		property_ = getattr(instance, property_name)
+		return_object(property_, success_callback, success_object_callback)
 
 	except Exception as exception:
 		exception_callback.Call(format_exception(exception))
@@ -126,14 +126,14 @@ def call_exported_object_property_set(success_callback, success_object_callback,
 		if not object_id in exported_objects:
 			raise Exception("object_id {0} not found in exported_objects".format(object_id))
 		instance = exported_objects[object_id]()
-		property = getattr(instance, property_name)
+		property_ = getattr(instance, property_name)
 		
-		property_type = type(property)
+		property_type = type(property_)
 
 		if property_type in BASIC_TYPES:
 			setattr(instance, property_name, value)
 		elif property_type in CUSTOM_EXPORTS:
-			set_from_advanced_type(property, value)
+			set_from_advanced_type(property_, value)
 		else:
 			raise Exception("Cannot call set on property of type [{}]".format(str(property_type)))
 		

@@ -106,7 +106,10 @@ class LoadProjectDialog extends Element {
 		try {
 			await application.serverInstance.load_project(projectFolderPath);
 			$('#loadModal').modal('hide');
-			await application.refresh();
+
+			application.onNextUpdate.push(async () => {
+				await application.refresh();
+			});
 		}
 		catch(exception) {
 			showException(exception);

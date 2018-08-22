@@ -4,6 +4,9 @@ import os
 import json
 import rulr.Utils
 
+from importlib import reload
+import sys
+
 SAVE_FOLDER = os.path.join(os.path.sys.argv[0], os.pardir, os.pardir, "Projects")
 ROOT_NODE_JSON = "main.json"
 

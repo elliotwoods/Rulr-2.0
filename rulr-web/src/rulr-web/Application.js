@@ -2,6 +2,7 @@ import { showException } from './Utils.js'
 import { fromServerInstance } from './Imports.js'
 import { pyCall } from './Imports.js'
 import { Window } from './Interface/Window.js'
+
 class Application {
 	constructor() {
 		this.window = new Window();
@@ -9,6 +10,7 @@ class Application {
 		this.explorerNodePath = [];
 		this.selection = null;
 		this.serverInstance = null;
+		this.onNextUpdate = [];
 	}
 
 	async initialise(serverApplication) {
@@ -52,6 +54,11 @@ class Application {
 	}
 
 	async update() {
+		for(let action of this.onNextUpdate) {
+			await action();
+		}
+		this.onNextUpdate = [];
+
 		await this.serverInstance.update();
 		if (this.rootNode != null) {
 			await this.rootNode.updateData();

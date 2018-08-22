@@ -6,6 +6,8 @@ import rulr.Utils.Parameters
 import numpy as np
 
 class Node(rulr.Nodes.Base):
+	"""Preview an axis in the scene"""
+
 	def __init__(self):
 		super().__init__()
 		
