@@ -1,5 +1,6 @@
 import { Base } from './Base.js'
 import { fromServerInstance } from '../Imports.js'
+import * as Debug from '../Utils/Debug.js'
 
 class Node extends Base {
 	constructor() {
@@ -71,5 +72,6 @@ class Node extends Base {
 		}
 	}
 }
+Debug.wrapClassPrototypeMethods(Node);
 
 export { Node };

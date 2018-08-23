@@ -1,4 +1,5 @@
 import { Base } from '../Base.js'
+import * as Debug from '../../Utils/Debug.js'
 
 function flatten(arr) {
 	return arr.reduce(function (flat, toFlatten) {
@@ -35,5 +36,6 @@ class Node extends Base {
 		this.axesPreview.matrix.transpose();
 	}
 }
+Debug.wrapClassPrototypeMethods(Node);
 
 export { Node };

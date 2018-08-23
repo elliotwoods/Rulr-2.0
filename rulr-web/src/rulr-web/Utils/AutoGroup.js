@@ -1,6 +1,7 @@
 import { Viewable } from './Viewable.js'
 import { fromServerInstance } from '../Imports.js'
 import { Group } from '../Widgets/Group.js'
+import * as Debug from './Debug.js'
 
 export class AutoGroup extends Viewable {
 	constructor() {
@@ -82,3 +83,4 @@ export class AutoGroup extends Viewable {
 		this.widget.needsRedraw = true;
 	}
 }
+Debug.wrapClassPrototypeMethods(AutoGroup);

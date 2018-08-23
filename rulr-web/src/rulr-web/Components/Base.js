@@ -4,6 +4,8 @@ import { AutoGroup } from '../Utils/AutoGroup.js'
 import { Viewable } from '../Utils/Viewable.js'
 import { fromServerInstance } from '../Imports.js'
 import { ComponentCard } from '../Widgets/ComponentCard.js'
+import * as Debug from '../Utils/Debug.js'
+
 export class Base extends Viewable {
 	constructor() {
 		super();
@@ -22,12 +24,21 @@ export class Base extends Viewable {
 	}
 
 	async updateData() {
+		Debug.enter(this);
+
 		await super.updateData();
 		await this.parameters.updateData();
+
+		Debug.leave();
 	}
 
 	async updateView() {
 		await super.updateView();
 		await this.parameters.updateView();
+	}
+
+	getName() {
+		//Currently this is only used by the graph debugger
+		return this.widget.caption;
 	}
 }

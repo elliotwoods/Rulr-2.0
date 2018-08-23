@@ -2,6 +2,7 @@ import { pyCall } from '../Imports.js'
 import { showException } from '../Utils.js'
 import { application } from '../Application.js'
 import { Element } from './Element.js'
+import { displayModal } from './GeneralModal.js'
 
 class LoadProjectDialog extends Element {
 	constructor() {
@@ -9,8 +10,20 @@ class LoadProjectDialog extends Element {
 	}
 
 	show() {
-		$('#loadModal').modal({});
-		this.refresh('.');
+		let modalDiv = displayModal("Load project").then((modal) => {
+			modal.append($(`
+				<ol id="loadDialog-breadcrumb" class="breadcrumb">
+					<li class="breadcrumb-item">
+						Home
+					</li>
+					<li class="breadcrumb-item">Examples</li>
+				</ol>
+				<div id="loadDialog-content" class="list-group">
+
+				</div>
+			`));
+			this.refresh('.');
+		});
 	}
 
 	async refresh(folderPath) {
@@ -105,7 +118,7 @@ class LoadProjectDialog extends Element {
 	async loadProject(projectFolderPath) {
 		try {
 			await application.serverInstance.load_project(projectFolderPath);
-			$('#loadModal').modal('hide');
+			$('#generalModal').modal('hide');
 
 			application.onNextUpdate.push(async () => {
 				await application.refresh();

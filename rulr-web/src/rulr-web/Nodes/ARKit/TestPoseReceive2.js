@@ -1,4 +1,5 @@
 import { Base } from '../Base.js'
+import * as Debug from '../../Utils/Debug.js'
 
 class Node extends Base {
 	constructor() {
@@ -65,5 +66,6 @@ class Node extends Base {
 		this.previewImage.matrix.copy(viewProjectionInverse);
 	}
 }
+Debug.wrapClassPrototypeMethods(Node);
 
 export { Node };

@@ -5,6 +5,7 @@ import * as ImageWidget from '../Widgets/Image.js'
 
 import { Viewable } from './Viewable.js'
 import { LiquidEvent } from './LiquidEvent.js'
+import * as Debug from './Debug.js'
 
 export class Base extends Viewable {
 	constructor() {
@@ -127,4 +128,15 @@ export class Image extends Base {
 			this.widget.needsRedraw = true;
 		})
 	}
+
+	getName() {
+		//Currently this is only used by the graph debugger
+		return this.widget.caption;
+	}
 }
+
+Debug.wrapClassPrototypeMethods(Base);
+Debug.wrapClassPrototypeMethods(Float);
+Debug.wrapClassPrototypeMethods(Vector);
+Debug.wrapClassPrototypeMethods(Matrix);
+Debug.wrapClassPrototypeMethods(Image);

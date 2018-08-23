@@ -2,6 +2,7 @@ import { showException } from './Utils.js'
 import { fromServerInstance } from './Imports.js'
 import { pyCall } from './Imports.js'
 import { Window } from './Interface/Window.js'
+import * as Debug from './Utils/Debug.js'
 
 class Application {
 	constructor() {
@@ -47,9 +48,7 @@ class Application {
 		}
 		else {
 			// If not loaded, pop up the load project dialog
-			this.window.loadProjectDialog.whenReady(() => {
-				this.window.loadProjectDialog.show();
-			});
+			this.showLoadDialog();
 		}
 	}
 
@@ -59,6 +58,11 @@ class Application {
 		}
 		this.onNextUpdate = [];
 
+		// We split this out so that we can call _update from debugCallTree
+		await this._update();
+	}
+
+	async _update() {
 		await this.serverInstance.update();
 		if (this.rootNode != null) {
 			await this.rootNode.updateData();
@@ -78,6 +82,40 @@ class Application {
 	selectNode(nodeInstance) {
 		this.selection = nodeInstance;
 		this.window.inspector.needsRefresh = true;
+	}
+
+	showLoadDialog() {
+		this.window.loadProjectDialog.whenReady(() => {
+			this.window.loadProjectDialog.show();
+		});
+	}
+
+	async debugCallTree() {
+		Debug.activate();
+		{
+			var debugScope = Debug.enter(this);
+			{
+				await this._update();
+			}
+			Debug.leave();
+
+			let modalDom = await application.window.generalModal.display("Debug call tree", 0.9);
+
+			let resultChart = $("<div></div>");
+			modalDom.append(resultChart);
+
+			let nodeTemplate = (debugNode) => {
+				return debugNode.nodeInstance.getFormatted();
+			};
+
+			var results = debugScope.report();
+			resultChart.orgchart({
+				'pan' : true,
+				'data' : results,
+				'nodeTemplate' : nodeTemplate
+			})
+		}
+		Debug.deactivate();
 	}
 }
 

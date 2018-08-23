@@ -1,4 +1,5 @@
 import { LiquidEvent } from './LiquidEvent.js'
+import * as Debug from './Debug.js'
 
 export class Viewable {
 	constructor() {
@@ -19,6 +20,8 @@ export class Viewable {
 		this.onFirstDataReady = new LiquidEvent();
 		this.onDataRefresh = new LiquidEvent();
 		this.onChange = new LiquidEvent(); // This is fired on client or server changes
+
+		//Debug.wrapClassInstanceMethods(this);
 	}
 
 	// init() is called once per object creation. Consider putting any async init operations inside here
@@ -97,3 +100,5 @@ export class Viewable {
 
 	}
 }
+
+Debug.wrapClassPrototypeMethods(Viewable);

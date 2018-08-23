@@ -1,6 +1,6 @@
 //Item.Camera
 import { Base } from '../Base.js'
-//import * as THREE from '../../../../node_modules/three/src/Three.js';
+import * as Debug from '../../Utils/Debug.js'
 
 class Node extends Base {
 	constructor() {
@@ -16,5 +16,6 @@ class Node extends Base {
 		this.viewportObject.add(this.viewportCameraPreview);
 	}
 }
+Debug.wrapClassPrototypeMethods(Node);
 
 export { Node };

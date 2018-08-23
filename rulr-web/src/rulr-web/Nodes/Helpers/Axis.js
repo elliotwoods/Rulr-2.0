@@ -1,4 +1,5 @@
 import { Base } from '../Base.js'
+import * as Debug from '../../Utils/Debug.js'
 
 class Node extends Base {
 	async init() {
@@ -21,5 +22,6 @@ class Node extends Base {
 		this.axes.visible = scale != 0.0;
 	}
 }
+Debug.wrapClassPrototypeMethods(Node);
 
 export { Node };

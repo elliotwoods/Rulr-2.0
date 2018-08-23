@@ -12,3 +12,12 @@ body {
 	margin-left: -25%;
 	left: 50%;
 }
+
+.toolbar {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+.toolbarItem {
+	margin-right: 5px;
+}

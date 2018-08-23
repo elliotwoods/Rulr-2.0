@@ -1,5 +1,6 @@
 import { Viewable } from '../Utils/Viewable.js'
 import { AutoGroup } from '../Utils/AutoGroup.js'
+import * as Debug from '../Utils/Debug.js'
 
 export class Header extends Viewable {
 	constructor() {
@@ -68,4 +69,11 @@ export class Base extends Viewable {
 			return child.getChildByPath(nodePath.slice(1));
 		}
 	}
+
+	getName() {
+		//Currently this is only used by the graph debugger
+		return this.header.description.name;
+	}
 }
+
+Debug.wrapClassPrototypeMethods(Base);

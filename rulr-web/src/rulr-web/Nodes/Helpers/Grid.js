@@ -1,4 +1,5 @@
 import {Base} from '../Base.js'
+import * as Debug from '../../Utils/Debug.js'
 
 class Node extends Base {
 	async init() {
@@ -8,5 +9,6 @@ class Node extends Base {
 		this.viewportObject.add(this.minor);
 	}
 }
+Debug.wrapClassPrototypeMethods(Node);
 
 export { Node };
