@@ -12,6 +12,7 @@ class Node extends Base {
 		this.components.onFirstDataReady.addListener(() => {
 			var updateViewportCallback = () => {
 				this.needsViewportUpdate = true;
+				//this.needsViewportFrameCountdown = 1;
 			};
 
 			//Add the rigid_body's viewportObject to ours (which will be rendered)
@@ -43,11 +44,17 @@ class Node extends Base {
 		this.viewportObject.add(this.previewImage);
 		this.previewImage.matrixAutoUpdate = false;
 
-		this.updateViewportCountdown = 1;
+		//weird hack for incoming frames
+		this.needsViewportFrameCountdown = 0;
 	}
 
 	async updateData() {
 		await super.updateData();
+
+		this.needsViewportFrameCountdown--;
+		if(this.needsViewportFrameCountdown == 0) {
+			this.needsViewportUpdate = true;
+		}
 	}
 
 	async viewportUpdate() {

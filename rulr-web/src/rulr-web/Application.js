@@ -1,4 +1,4 @@
-import { showException } from './Utils.js'
+import { showException, request } from './Utils.js'
 import { fromServerInstance } from './Imports.js'
 import { pyCall } from './Imports.js'
 import { Window } from './Interface/Window.js'
@@ -21,6 +21,9 @@ class Application {
 
 			// start the regular update
 			regularUpdate();
+
+			// start the viewport render loop
+			renderLoop();
 		}
 		catch (exception) {
 			showException(exception);
@@ -145,7 +148,25 @@ var application = new Application();
 
 let applicationLockUpdate = false;
 function regularUpdate() {
-	application.update().then(regularUpdate);
+	application.update().then(() => {
+		requestAnimationFrame(regularUpdate);
+
+		if(application.window.viewport.ready) {
+			//application.window.viewport.render();
+		}
+	});
+}
+
+function renderLoop(time) {
+	requestAnimationFrame(renderLoop);
+	try {
+		if(application.window.viewport.ready) {
+			application.window.viewport.render();
+		}
+	}
+	finally {
+		
+	}
 }
 
 export { application };

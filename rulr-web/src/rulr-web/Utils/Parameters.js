@@ -129,6 +129,11 @@ export class Image extends Base {
 		})
 	}
 
+	async updateData() {
+		//HACK : do nothing - supress super.update()
+		await super.updateData();
+	}
+
 	getName() {
 		//Currently this is only used by the graph debugger
 		return this.widget.caption;

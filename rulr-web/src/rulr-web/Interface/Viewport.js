@@ -55,7 +55,8 @@ class Viewport extends Element {
 
 		{
 			this.orbitControls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
-			this.orbitControls.addEventListener('change', this.render.bind(this));
+			// Force a render
+			this.orbitControls.addEventListener('change', this._render.bind(this));
 			this.orbitControls.mouseButtons.ZOOM = 2;
 			this.orbitControls.mouseButtons.PAN = 1;
 		}
@@ -82,9 +83,7 @@ class Viewport extends Element {
 	async update() {
 		await super.update();
 
-		this.orbitControls.update();
-		this.raycast();
-		this.render();
+
 	}
 
 	async refresh() {
@@ -135,11 +134,14 @@ class Viewport extends Element {
 	}
 
 	render() {
-		this.renderer.render(this.scene, this.camera);
+		this.orbitControls.update();
+		this.raycaster.setFromCamera(this.mousePosition, this.camera);
+		this._render();
 	}
 
-	raycast() {
-		this.raycaster.setFromCamera(this.mousePosition, this.camera);
+	_render() {
+		// This doesn't include orbitControls, which may also invoke a render onChange
+		this.renderer.render(this.scene, this.camera);
 	}
 }
 

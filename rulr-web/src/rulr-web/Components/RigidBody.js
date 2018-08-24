@@ -18,6 +18,8 @@ export class Component extends Base {
 	}
 
 	async viewportUpdate() {
+		await super.viewportUpdate();
+		
 		this.parameters.transform.populateTHREEMatrix(this.viewportObject.matrix);
 	}
 }

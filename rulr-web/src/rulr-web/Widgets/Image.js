@@ -19,7 +19,7 @@ export class Widget extends Base {
 
 	draw() {
 		super.draw();
-
+		
 		var image_b64_string = this.getFunction();
 		if(image_b64_string.length == 0)
 		{
