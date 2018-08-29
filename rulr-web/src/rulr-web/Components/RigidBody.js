@@ -163,5 +163,30 @@ export class Component extends Base {
 				positionAttribute.needsUpdate = true;
 			}
 		}
+
+		if(this.parameters.trail.style.axes.value) {
+			//Create the collection of axes
+			if(this.trail.axes == null) {
+				this.trail.axes = new THREE.Object3D();
+				this.viewportObject.add(this.trail.axes);
+			}
+
+			// Trim excess children
+			while(this.trail.axes.children.length > this.trail.history.length) {
+				this.trail.axes.remove(this.trail.axes.children[0]);
+			}
+
+			// Add enough children
+			while(this.trail.axes.children.length < this.trail.history.length) {
+				let axisHelper = new THREE.AxesHelper(0.05);
+				axisHelper.matrixAutoUpdate = false;
+				this.trail.axes.add(axisHelper);
+			}
+
+			// Update the matrix for each
+			for(let i=0; i<this.trail.history.length; i++) {
+				this.trail.axes.children[i].matrix.copy(this.trail.history[i]);
+			}
+		}
 	}
 }
