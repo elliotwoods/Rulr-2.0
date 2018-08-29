@@ -1,4 +1,3 @@
-import transforms3d
 import rulr.Nodes
 import rulr.Utils
 from rulr.Utils.AutoGroup import AutoGroup

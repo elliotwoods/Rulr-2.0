@@ -92,7 +92,8 @@ export class Matrix extends Base {
 
 				tableCell.width(`100%`);
 
-				let cellContent = $(`<a href="#${this.hrefName}" class="rulr-widgets-matrix-table-cellcontent"></a>`);
+				//we could jump to ${this.hrefName} at this point, but actually it's jarring
+				let cellContent = $(`<a href="#" class="rulr-widgets-matrix-table-cellcontent"></a>`);
 				tableCell.append(cellContent);
 
 				let cellIndex = [rowIndex, colIndex];

@@ -2,6 +2,7 @@ import { Viewable } from './Viewable.js'
 import { fromServerInstance } from '../Imports.js'
 import { Group } from '../Widgets/Group.js'
 import * as Debug from './Debug.js'
+import { LiquidEvent } from './LiquidEvent.js';
 
 export class AutoGroup extends Viewable {
 	constructor() {
@@ -12,6 +13,11 @@ export class AutoGroup extends Viewable {
 
 		// Create the widget
 		this.widget = new Group(() => this.childWidgets);
+
+		this.onAnyChildChange = new LiquidEvent();
+		this.onChildChangeListener = () => {
+			this.onAnyChildChange.notifyListeners();
+		};
 	}
 
 	getChildKeys() {
@@ -65,6 +71,11 @@ export class AutoGroup extends Viewable {
 				var child = await fromServerInstance(childServerInstance);
 				this.children[serverChildName] = child;
 				this[serverChildName] = child;
+				
+				// Add bubble up listeners to any children for onAnyChildChange
+				if('onChange' in child) {
+					child.onChange.addListener(this.onChildChangeListener);
+				}
 			}
 		}
 	}

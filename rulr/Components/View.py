@@ -2,6 +2,7 @@ import rulr.Components
 from rulr.Utils.Parameters import Float, Vector, BoundVector, Matrix, Property
 from rulr.Utils.AutoGroup import AutoGroup
 import rulr.Utils
+import rulr.Math
 
 import numpy as np
 import math
@@ -46,27 +47,13 @@ class Component(rulr.Components.Base):
 		self.parameters.normalized_camera_matrix.commit()
 
 	def clipped_projection_matrix_get(self):
-		fx_n = self.parameters.normalized_camera_matrix.value[0, 0]
-		fy_n = self.parameters.normalized_camera_matrix.value[1, 1]
-		cx_n = self.parameters.normalized_camera_matrix.value[0, 2]
-		cy_n = self.parameters.normalized_camera_matrix.value[1, 2]
-
-#see https://github.com/elliotwoods/ofxCvMin/blob/master/src/ofxCvMin/Helpers.cpp#L42
-		matrix = np.array([
-			[2 * fx_n, 		0, 			0, 		2 * cx_n - 1.0],
-			[0, 			2 * fy_n, 	0, 		2 * cy_n - 1.0],
-			[0, 			0, 			-1, 		-0.2],
-			[0, 			0, 			-1, 		0]
-		], dtype= np.float)
-
+		camera_matrix = self.camera_matrix_get()
+		resolution_width = self.parameters.resolution.value[0]
+		resolution_height = self.parameters.resolution.value[1]
 		near_clip = self.parameters.clip_planes.value[0]
 		far_clip = self.parameters.clip_planes.value[1]
 
-#see http://www.songho.ca/opengl/gl_projectionmatrix.html
-		matrix[2,2] = - (far_clip + near_clip) / (far_clip - near_clip)
-		matrix[2,3] = - 2 * far_clip * near_clip / (far_clip - near_clip)
-		
-		return matrix
+		return rulr.Math.make_clipped_projection_matrix(camera_matrix, resolution_width, resolution_height, near_clip, far_clip)
 	
 	def update_camera_matrices(self):
 		self.parameters.camera_matrix.commit()

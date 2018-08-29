@@ -115,7 +115,10 @@ class Application {
 			resultChart.orgchart({
 				'pan' : true,
 				'data' : results,
-				'nodeTemplate' : nodeTemplate
+				'nodeTemplate' : nodeTemplate,
+				'zoom' : true,
+				'zoominLimit' : 1,
+				'zoomoutLimit' : 0.25
 			})
 		}
 		Debug.deactivate();

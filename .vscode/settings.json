@@ -1,5 +1,5 @@
 {
-	"python.pythonPath": "C:\\Users\\kimchips\\Anaconda3\\envs\\Rulr\\python.exe",
+	"python.pythonPath": "C:\\Users\\kimchips\\Anaconda3\\envs\\Rulr-2.0\\python.exe",
 	"editor.insertSpaces": false,
 	"files.exclude": {
 		"**/blob_storage": true,

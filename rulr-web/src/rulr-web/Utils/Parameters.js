@@ -2,6 +2,7 @@ import { Group } from '../Widgets/Group.js'
 import { Numeric } from '../Widgets/Numeric.js'
 import * as MatrixWidget from '../Widgets/Matrix.js'
 import * as ImageWidget from '../Widgets/Image.js'
+import * as ToggleWidget from '../Widgets/Toggle.js'
 
 import { Viewable } from './Viewable.js'
 import { LiquidEvent } from './LiquidEvent.js'
@@ -20,7 +21,9 @@ export class Base extends Viewable {
 
 	async pushData() {
 		await super.pushData();
-		await this.serverInstance.set(this.value);
+		if('set' in this.serverInstance) {
+			await this.serverInstance.set(this.value);
+		}
 	}
 }
 
@@ -137,6 +140,23 @@ export class Image extends Base {
 	getName() {
 		//Currently this is only used by the graph debugger
 		return this.widget.caption;
+	}
+}
+
+export class Bool extends Base {
+	constructor() {
+		super();
+
+		this.widget = new ToggleWidget.Widget(() => {
+			return this.value;
+		}, (newValue) => {
+			this.value = newValue;
+			this.commit();
+		})
+
+		this.onChange.addListener(() => {
+			this.widget.needsRedraw = true;
+		})
 	}
 }
 

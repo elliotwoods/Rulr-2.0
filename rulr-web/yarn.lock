@@ -480,6 +480,10 @@ three@^0.94.0:
   version "0.94.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.94.0.tgz#4ce6db7f2bfbf79c2d73444aa6e3cfc08a32d762"
 
+titatoggle@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/titatoggle/-/titatoggle-2.1.2.tgz#2ff80117eebd40042db98bfe057fe95e135b6f58"
+
 tough-cookie@^2.2.0, tough-cookie@~2.4.3:
   version "2.4.3"
   resolved "https://registry.yarnpkg.com/tough-cookie/-/tough-cookie-2.4.3.tgz#53f36da3f47783b0925afa06ff9f3b165280f781"

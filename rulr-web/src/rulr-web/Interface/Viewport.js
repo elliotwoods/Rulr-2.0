@@ -33,9 +33,9 @@ class Viewport extends Element {
 
 		{
 			this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01 * scaleFactor, 1000 * scaleFactor);
-			this.camera.position.x = 0;
+			this.camera.position.x = 3;
 			this.camera.position.y = 3;
-			this.camera.position.z = 10;
+			this.camera.position.z = 3;
 			this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 		}
 
@@ -82,8 +82,6 @@ class Viewport extends Element {
 
 	async update() {
 		await super.update();
-
-
 	}
 
 	async refresh() {

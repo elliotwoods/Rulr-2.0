@@ -29,4 +29,3 @@ wcwidth==0.1.7
 Werkzeug==0.14.1
 wincertstore==0.2
 wrapt==1.10.11
-bumpversion=0.5.3

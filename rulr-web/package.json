@@ -6,6 +6,7 @@
     "orgchart": "^2.1.2",
     "popper.js": "^1.14.3",
     "three": "^0.94.0",
+    "titatoggle": "^2.1.2",
     "tween.js": "^16.6.0"
   }
 }

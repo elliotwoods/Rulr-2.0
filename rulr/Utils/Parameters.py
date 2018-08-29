@@ -80,7 +80,10 @@ class Image(Base):
 			image_buffer_b64 = base64.b64encode(encoded_result.tostring())
 			return image_buffer_b64.decode("utf-8")
 
-
+class Bool(Base):
+	def formatter(self, value):
+		return bool(value)
+	
 class Property():
 	def __init__(self, get, set = None):
 		self.get = get
