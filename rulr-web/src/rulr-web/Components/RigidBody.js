@@ -115,6 +115,7 @@ export class Component extends Base {
 					});
 
 					this.trail.line.viewportObject = new THREE.Line(this.trail.line.geometry, this.trail.line.material);
+					this.trail.line.viewportObject.frustumCulled = false; // TODO : fix culling
 					this.viewportObject.add(this.trail.line.viewportObject);
 				}
 			}
@@ -133,34 +134,46 @@ export class Component extends Base {
 				this.trail.line.colorBuffer.setDynamic = true;
 				this.trail.line.geometry.addAttribute('color', this.trail.line.colorBuffer);
 			}
+			
+			if(this.trail.history.length > 0) {
+				// Update the line data
+				{
+					let positionAttribute = this.trail.line.geometry.attributes.position;
+					let positionArray = positionAttribute.array;
 
-			// Update the line data
-			{
-				let positionAttribute = this.trail.line.geometry.attributes.position;
-				let positionArray = positionAttribute.array;
+					let colorAttribute = this.trail.line.geometry.attributes.color;
+					let colorArray = colorAttribute.array;
 
-				let colorAttribute = this.trail.line.geometry.attributes.color;
-				let colorArray = colorAttribute.array;
+					for(let i=0; i<this.trail.history.length; i++) {
+						// extract the positions from the array of matrices
+						let position = new THREE.Vector3();
+						position.setFromMatrixColumn(this.trail.history[i], 3);
+						positionArray[i * 3 + 0] = position.x;
+						positionArray[i * 3 + 1] = position.y;
+						positionArray[i * 3 + 2] = position.z;
 
-				for(let i=0; i<this.trail.history.length; i++) {
-					// extract the positions from the array of matrices
-					let position = new THREE.Vector3();
-					position.setFromMatrixColumn(this.trail.history[i], 3);
-					positionArray[i * 3 + 0] = position.x;
-					positionArray[i * 3 + 1] = position.y;
-					positionArray[i * 3 + 2] = position.z;
-
-					// Note : the color isn't working right now
-					let fade = i / this.trail.history.length;
-					colorArray[i * 4 + 0] = fade;
-					colorArray[i * 4 + 1] = fade;
-					colorArray[i * 4 + 2] = fade;
-					colorArray[i * 4 + 3] = fade;
+						// Note : the color isn't working right now
+						let fade = i / this.trail.history.length;
+						colorArray[i * 4 + 0] = fade;
+						colorArray[i * 4 + 1] = fade;
+						colorArray[i * 4 + 2] = fade;
+						colorArray[i * 4 + 3] = fade;
+					}
+					this.trail.line.geometry.setDrawRange(0, this.trail.history.length);
+					this.trail.line.visible = this.trail.history.length > 1;
+					
+					positionAttribute.needsUpdate = true;
 				}
-				this.trail.line.geometry.setDrawRange(0, this.trail.history.length);
-				this.trail.line.visibility = this.trail.history.length > 1;
-				
-				positionAttribute.needsUpdate = true;
+
+				this.trail.line.viewportObject.visible = true;
+			}
+			else {
+				this.trail.line.viewportObject.visible = false;
+			}
+		}
+		else {
+			if(this.trail.line != null) {
+				this.trail.line.viewportObject.visible = false;
 			}
 		}
 
@@ -186,6 +199,131 @@ export class Component extends Base {
 			// Update the matrix for each
 			for(let i=0; i<this.trail.history.length; i++) {
 				this.trail.axes.children[i].matrix.copy(this.trail.history[i]);
+			}
+
+			this.trail.axes.visible = true;
+		}
+		else {
+			if(this.trail.axes != null) {
+				this.trail.axes.visible = false;
+			}
+		}
+
+		if(this.parameters.trail.style.curve.value) {
+			let curveResolution = 5;
+
+			// Create the line
+			if(this.trail.curve == null) {
+				this.trail.curve = new Object();
+
+				// Make the line buffer data
+				{
+					let curvePointCount = curveResolution * this.parameters.trail.duration__frames.value;
+
+					this.trail.curve.positionBufferArray = new Float32Array(curvePointCount * 3 * 2);
+					this.trail.curve.positionBuffer = new THREE.BufferAttribute(this.trail.curve.positionBufferArray, 3);
+					this.trail.curve.positionBuffer.setDynamic = true;
+				}
+
+				// Make the line object
+				{
+					this.trail.curve.geometry = new THREE.BufferGeometry();
+					this.trail.curve.geometry.addAttribute('position', this.trail.curve.positionBuffer);
+					
+					this.trail.curve.material = new THREE.LineBasicMaterial({
+						linewidth : 5,
+						color : 0x333333,
+						opacity : 0.5
+					});
+
+					this.trail.curve.viewportObject = new THREE.Line(this.trail.curve.geometry, this.trail.curve.material);
+					this.trail.curve.viewportObject.frustumCulled = false; // TODO : fix culling
+					this.viewportObject.add(this.trail.curve.viewportObject);
+				}
+			}
+
+			let curvePointCount = curveResolution * this.trail.history.length;
+
+			// Reallocate the line
+			if(curvePointCount > this.trail.curve.positionBufferArray.length / 3) {
+				this.trail.curve.removeAttribute('position');
+				this.trail.curve.positionBufferArray = new Float32Array(curvePointCount * 3 * 2);
+				this.trail.curve.positionBuffer = new THREE.BufferAttribute(this.trail.curve.positionBufferArray, 3);
+				this.trail.curve.positionBuffer.setDynamic = true;
+				this.trail.curve.geometry.addAttribute('position', this.trail.curve.positionBuffer);
+			}
+
+			// Update the line data
+			if (this.trail.history.length > 1) {
+				let positionAttribute = this.trail.curve.geometry.attributes.position;
+				let positionArray = positionAttribute.array;
+
+				let previousPoint = null;
+				let nextPoint = null;
+				let thisPoint = null;
+
+				for(let i=0; i<this.trail.history.length; i++) {
+					let nextIndex = i + 1;
+
+					//update thisPoint and previousPoint
+					if (i == 0) {
+						// first point
+						thisPoint = new THREE.Vector3();
+						thisPoint.setFromMatrixColumn(this.trail.history[0], 3);
+						previousPoint = thisPoint;
+					}
+					else {
+						previousPoint = thisPoint;
+						thisPoint = nextPoint;
+					}
+
+					//update nextPoint
+					if(nextIndex < this.trail.history.length) {
+						nextPoint = new THREE.Vector3();
+						nextPoint.setFromMatrixColumn(this.trail.history[nextIndex], 3);
+					}
+
+					let priorVector = thisPoint.clone();
+					priorVector.sub(previousPoint);
+
+					let postVector = thisPoint.clone();
+					postVector.sub(nextPoint);
+
+					for(let c=0; c<curveResolution; c++) {
+						let x = c / curveResolution;
+						
+						let priorComponent = priorVector.clone();
+						priorComponent.multiplyScalar(x);
+						priorComponent.add(thisPoint);
+						priorComponent.multiplyScalar(1.0 - x);
+
+						let postComponent = postVector.clone();
+						postComponent.multiplyScalar(1.0 - x);
+						postComponent.add(nextPoint);
+						postComponent.multiplyScalar(x);
+						
+						let position = priorComponent.clone();
+						position.add(postComponent);
+
+						let pointIndex = i * curveResolution + c;
+						positionArray[pointIndex * 3 + 0] = position.x;
+						positionArray[pointIndex * 3 + 1] = position.y;
+						positionArray[pointIndex * 3 + 2] = position.z;
+					}
+				}
+				
+				this.trail.curve.geometry.setDrawRange(0, curvePointCount);
+				this.trail.curve.visible = true;
+				
+				positionAttribute.needsUpdate = true;
+				this.trail.curve.viewportObject.update
+			} else {
+				this.trail.curve.visible = false;
+			}
+		}
+		else {
+			if(this.trail.curve != null) {
+				this.trail.curve.viewportObject.visible = false;
 			}
 		}
 	}

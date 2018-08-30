@@ -76,6 +76,9 @@ export class AutoGroup extends Viewable {
 				if('onChange' in child) {
 					child.onChange.addListener(this.onChildChangeListener);
 				}
+				if('onAnyChildChange' in child) {
+					child.onAnyChildChange.addListener(this.onChildChangeListener);
+				}
 			}
 		}
 	}
