@@ -23,7 +23,7 @@ class WorldExplorer extends Element {
 				newEntry.find('#name').html(childNode.header.description.name);
 				newEntry.find('#nodePath').html('#' + childNode.header.description.ID);
 				newEntry.find('#moduleName').html(childNode.module);
-				newEntry.find('#description').html("description of node");
+				//newEntry.find('#description').html("description of node");
 
 				let toolBar = newEntry.find('#toolBar');
 				toolBar.hide();

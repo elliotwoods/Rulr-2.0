@@ -2,6 +2,7 @@ import { Element } from './Element.js'
 import { application } from '../Application.js'
 import { Group } from '../Widgets/Group.js'
 import { Notice } from '../Widgets/Notice.js'
+import { Button } from '../Widgets/Button.js'
 
 class Inspector extends Element {
 	constructor() {
@@ -36,13 +37,16 @@ class Inspector extends Element {
 		}
 		else {
 			// Single node is selected
-
 			nodeSelection.components.widget.caption = "Components";
 			nodeSelection.parameters.widget.caption = "Parameters";
 			
 			this.childWidgets.push(nodeSelection.components.widget);
 			this.childWidgets.push(nodeSelection.parameters.widget);
 			
+			for(let [actionName, action] of Object.entries(nodeSelection.actions)) {
+				this.childWidgets.push(new Button(actionName, action));
+			}
+
 			this.groupWidget.caption = nodeSelection.header.name
 			this.groupWidget.needsRedraw = true;
 		}

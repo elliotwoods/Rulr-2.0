@@ -31,6 +31,16 @@
 				"content" : {
 
 				}
+			},
+			{
+				"moduleName" : "Item.RigidBody",
+				"header" : {
+					"name" : "Board in OpenPose",
+					"ID" : 4
+				},
+				"content" : {
+					
+				}
 			}
 		]
 	}

@@ -6,7 +6,6 @@ from rulr.Utils import Viewable
 
 from enum import Enum
 
-
 class Header(Viewable):
 	def __init__(self):
 		super().__init__()
@@ -35,6 +34,7 @@ class Base(Viewable):
 
 		self.parameters = AutoGroup()
 		self.components = AutoGroup()
+		self.actions = AutoGroup()
 
 		self.update_action_queue = queue.Queue()
 		self.frame_exception_queue = queue.Queue()

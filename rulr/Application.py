@@ -7,12 +7,17 @@ import rulr.Utils
 from importlib import reload
 import sys
 
+import tkinter as tk
+
 SAVE_FOLDER = os.path.join(os.path.sys.argv[0], os.pardir, os.pardir, "Projects")
 ROOT_NODE_JSON = "main.json"
 
 class Application(object):
 	def __init__(self):
 		self.rootNode = None
+
+		root = tk.Tk()
+		root.withdraw()
 
 	def update(self):
 		if self.has_root_node():

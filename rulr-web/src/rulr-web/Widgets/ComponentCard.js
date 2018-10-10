@@ -35,6 +35,13 @@ export class ComponentCard extends Base {
 			//Add the parameter widgets to the list
 			this.component.parameters.widget.appendTo(innerList);
 
+			//Add the actions
+			for(let [caption, action] of Object.entries(this.component.actions)) {
+				let button = $(`<button class="btn">${caption}</button>`);
+				button.click(action);
+				this.componentCard.append(button);
+			}
+
 			let toolBar = this.componentCard.find('#toolBar');
 			toolBar.hide();
 

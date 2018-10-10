@@ -1,6 +1,8 @@
 import { Viewable } from '../Utils/Viewable.js'
 import { AutoGroup } from '../Utils/AutoGroup.js'
 import * as Debug from '../Utils/Debug.js'
+import { showException } from '../Utils.js'
+
 
 export class Header extends Viewable {
 	constructor() {
@@ -39,6 +41,35 @@ export class Base extends Viewable {
 
 		this.components = new AutoGroup();
 		this.components.serverInstance = await this.serverInstance.components.get();
+		this.components.onFirstDataReady.addListener(() => {
+			console.log(this.components.children);
+			for(let [name, component] of Object.entries(this.components.children)) {
+				this.viewportObject.add(component.viewportObject);
+			}
+		});
+
+		this.actions = {};
+
+		let actionsGroup = await this.serverInstance.actions.get();
+		let actionNames = await actionsGroup.get_child_functions();
+
+		for (let actionName of actionNames) {
+			let action = actionsGroup[actionName];
+			this.actions[actionName] = () => {
+				let asyncAction = async () => {
+					try {
+						await action();
+					}
+					catch(exception) {
+						showException(exception);
+					}
+				};
+				asyncAction().then(() => {
+					this.needsGuiUpdate = true;
+					this.needsViewportUpdate = true;
+				});
+			};
+		}
 	}
 
 	async updateData() {

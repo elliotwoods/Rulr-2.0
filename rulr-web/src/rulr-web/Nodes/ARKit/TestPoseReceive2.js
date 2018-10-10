@@ -12,13 +12,10 @@ class Node extends Base {
 		};
 		
 		this.components.onFirstDataReady.addListener(() => {
-			this.components.rigid_body.viewportObject.add(this.viewFlippedFromCamera);
-
-			//Add the rigid_body's viewportObject to ours (which will be rendered)
-			this.viewportObject.add(this.components.rigid_body.viewportObject);
+			this.components.rigid_body.transformedObject.add(this.viewFlippedFromCamera);
 
 			// Add the view's viewportObject under the rigid_body's transformed object
-			this.components.rigid_body.transformedObject.add(this.components.view.viewportObject)
+			this.components.rigid_body.transformedObject.add(this.components.view.transformed_object)
 
 			this.components.rigid_body.parameters.onFirstDataReady.addListener(() => {
 				this.components.rigid_body.parameters.children.transform.onChange.addListener(updateViewportCallback);

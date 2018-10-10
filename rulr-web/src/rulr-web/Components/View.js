@@ -9,9 +9,10 @@ export class Component extends Base  {
 
 	async init() {
 		await super.init();
+		this.transformed_object = new THREE.Object3D();
 		this.viewportCamera = new THREE.Camera();
 		this.viewportHelper = new THREE.CameraHelper(this.viewportCamera);
-		this.viewportObject.add(this.viewportHelper);
+		this.transformed_object.add(this.viewportHelper);
 
 		this.parameters.onFirstDataReady.addListener(() => {
 			this.parameters.clipped_projection_matrix.onChange.addListener(() => {

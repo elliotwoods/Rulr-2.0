@@ -1,6 +1,7 @@
 import rulr.Nodes
 import rulr.Components.RigidBody
 import rulr.Components.View
+import rulr.Application
 from rulr.Utils.Parameters import Image, Bool, Matrix, Float
 
 import falcon
@@ -53,6 +54,8 @@ class Node(rulr.Nodes.Base):
 		self.parameters.board_transform = Matrix(make_identity_matrix())
 		self.parameters.board_reprojection_error = Float(0.0)
 
+		self.parameters.relative_transform = Matrix(make_identity_matrix())
+
 		# Open the web server
 		self.falcon_API = falcon.API()
 		self.falcon_API.req_options.auto_parse_form_urlencoded = True
@@ -78,24 +81,54 @@ class Node(rulr.Nodes.Base):
 			raise(Exception("Cannot bind to port {}".format(SERVER_PORT)))
 
 		self.marker_dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
-		self.charuco_board = cv2.aruco.CharucoBoard_create(11, 8, 0.03, 0.015, self.marker_dictionary)
+		self.charuco_board = cv2.aruco.CharucoBoard_create(11, 8, 0.06, 0.03, self.marker_dictionary)
+
+		self.actions.set_relative_transform = self.set_relative_transform
+
+		self.response_content = None
+
+	def update(self):
+		super().update()
+
+		# Create some basic points
+		preview_points__op = [
+			np.array([0.0, 0.0, 0.0]),
+			np.array([0.0, 0.0, 1.0]),
+			np.array([0.0, 0.0, 2.0])
+		]
+
+		# Transform them into ARKit space
+		preview_points__ark = [apply_matrix(self.parameters.relative_transform.value, point__op) for point__op in preview_points__op]
+		preview_points__ark_list = [list(x) for x in preview_points__ark]
+
+		self.response_content = {
+			"preview" : {
+				"points" : preview_points__ark_list
+			}
+		}
 
 	def close(self):
 		# Close the web server
 		self.httpd.shutdown()
 
 	def on_post(self, request, response, session, pose):
-		response.status = falcon.HTTP_200
-		
 		#print("session {} pose {}".format(session, pose))
 		#print(request.content_type)
 
+		# action
 		contentString = request.stream.read()		
 		content = json.loads(contentString)
-
 		self.update_action_queue.put(lambda: self.process_incoming(content))
+
+		# response
+		response.status = falcon.HTTP_200
+		response.body = json.dumps(self.response_content)
+		response.content_type = falcon.MEDIA_JSON
+		response.status = falcon.HTTP_200
 	
 	def process_incoming(self, content):
+		# This is run on the next update cycle
+
 		if not self.parameters.receive_enabled.value:
 			return
 
@@ -131,8 +164,7 @@ class Node(rulr.Nodes.Base):
 				reprojection, _ = cv2.projectPoints(object_points, rotation_vector, translation_vector, camera_matrix, None)
 				rmsError = np.sqrt(np.mean(np.square(reprojection - image_points)))
 
-
-				self.parameters.board_transform.value = make_rigid_body_transform_matrix(rotation_vector, translation_vector)
+				self.parameters.board_transform.value = make_rigid_body_transform_matrix(rotation_vector, translation_vector) * self.rigid_body.parameters.transform.value
 				self.parameters.board_transform.commit()
 
 				self.parameters.board_reprojection_error.value = float(rmsError)
@@ -149,3 +181,12 @@ class Node(rulr.Nodes.Base):
 		camera_matrix = camera_matrix.transpose()
 		self.components.view.parameters.camera_matrix.set(camera_matrix)
 		self.components.view.parameters.camera_matrix.commit()
+
+	def set_relative_transform(self):
+		# Create a transform which can be applied to points to transfom them into ARKit space (not current camera view space)
+
+		board_in_openpose_node = rulr.Application.instance.get_node_by_path([4])
+		board_in_openpose_transform = board_in_openpose_node.components.rigid_body.parameters.transform.value
+		board_in_arkit_transform = self.parameters.board_transform.value
+
+		self.parameters.relative_transform.value = np.linalg.inv(board_in_openpose_transform) * board_in_arkit_transform

@@ -21,6 +21,21 @@ export class Base extends Viewable {
 		var parametersServerInstance = await this.serverInstance.parameters.get();
 		this.parameters = await fromServerInstance(parametersServerInstance);
 		this.parameters.widget.caption = "Parameters";
+
+		this.actions = {};
+
+		let actionsGroup = await this.serverInstance.actions.get();
+		let actionNames = await actionsGroup.get_child_functions();
+
+		for (let actionName of actionNames) {
+			let action = actionsGroup[actionName];
+			this.actions[actionName] = () => {
+				action().then(() => {
+					this.needsGuiUpdate = true;
+					this.needsViewportUpdate = true;
+				});
+			};
+		}
 	}
 
 	async updateData() {
