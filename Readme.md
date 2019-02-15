@@ -1,6 +1,10 @@
+![Screenshot]
+(https://github.com/elliotwoods/Rulr-2.0/raw/master/readme/streaming_arkit.png)
+Screenshot of streaming ARKit data into Rulr.
+
 # Installation
 
-## Javascript
+## Javascript
 
 All contents of /Client/node_modules are in the .gitignore.
 We use [Yarn](https://yarnpkg.com/) for managing JavaScript and CSS packages.
