@@ -1,5 +1,5 @@
-![Screenshot]
-(https://github.com/elliotwoods/Rulr-2.0/raw/master/readme/streaming_arkit.png)
+![Screenshot](https://github.com/elliotwoods/Rulr-2.0/raw/master/readme/streaming_arkit.png)
+
 Screenshot of streaming ARKit data into Rulr.
 
 # Installation
