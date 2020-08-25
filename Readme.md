@@ -4,6 +4,15 @@ Screenshot of streaming ARKit data into Rulr.
 
 # Installation
 
+## Python
+
+```
+conda create -n rulr2 python=3.7.7
+conda activate rulr2
+pip install -r requirements.txt 
+```
+
+
 ## Javascript
 
 All contents of /Client/node_modules are in the .gitignore.
@@ -14,13 +23,6 @@ If you don't have Yarn installed, please first install [npm](https://www.npmjs.c
 To setup the local packages, cd into the Client folder and run:
 
 ```
+cd rulr-python/Client
 yarn install
-```
-
-## Python
-
-```
-conda create -n rulr2 python=3.4
-conda activate rulr2
-pip install -r requirements.txt 
 ```
