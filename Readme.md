@@ -4,6 +4,8 @@ Screenshot of streaming ARKit data into Rulr.
 
 # Installation
 
+Warning : we use a more recent version of cefpython3 than is generally available, because we want advanced JS features.
+
 ## Python
 
 ```
@@ -23,6 +25,6 @@ If you don't have Yarn installed, please first install [npm](https://www.npmjs.c
 To setup the local packages, cd into the Client folder and run:
 
 ```
-cd rulr-python/Client
+cd rulr-web
 yarn install
 ```
