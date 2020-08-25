@@ -20,7 +20,6 @@ pycodestyle==2.4.0
 Pygments==2.2.0
 pylint==1.8.4
 python-mimeparse==1.6.0
--e git+https://github.com/elliotwoods/Rulr-2.0.git@f74f61c64fff079d9d5aacf611d7fa735813d5e2#egg=rulr_python
 simplegeneric==0.8.1
 six==1.11.0
 traitlets==4.3.2
