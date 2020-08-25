@@ -20,5 +20,7 @@ yarn install
 ## Python
 
 ```
+conda create -n rulr2 python=3.4
+conda activate rulr2
 pip install -r requirements.txt 
 ```
