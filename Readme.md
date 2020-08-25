@@ -9,7 +9,7 @@ Warning : we use a more recent version of cefpython3 than is generally available
 ## Python
 
 ```
-conda create -n rulr2 python=3.7.7
+conda create -n rulr2 python=3.7.7 -y
 conda activate rulr2
 pip install -r requirements.txt 
 ```
