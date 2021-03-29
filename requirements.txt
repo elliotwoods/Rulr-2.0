@@ -18,7 +18,7 @@ parso==0.3.1
 pickleshare==0.7.4
 prompt-toolkit==1.0.15
 pycodestyle==2.4.0
-Pygments==2.2.0
+Pygments==2.7.4
 pylint==1.8.4
 python-mimeparse==1.6.0
 simplegeneric==0.8.1
